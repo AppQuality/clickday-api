@@ -13,7 +13,7 @@ export default async (userId: number) => {
       "wp_users.ID",
       "wp_appq_evd_profile.wp_user_id"
     )
-    .where("ID", userId)
+    .where("wp_users.ID", userId)
     .first();
   if (!results) {
     return Error("No user with id " + userId);
