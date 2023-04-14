@@ -4,7 +4,7 @@ export default async (userName: string) => {
   const results = await tryber.tables.WpUsers.do()
     .select(
       tryber.ref("id").withSchema("wp_appq_evd_profile").as("testerId"),
-      "ID",
+      tryber.ref("ID").withSchema("wp_users"),
       "user_login",
       "user_pass"
     )
