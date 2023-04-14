@@ -2,7 +2,7 @@
 set -euo pipefail
 
 
-PROJECT_NAME="openapi-base-project"
+PROJECT_NAME="tryber-cd-api"
 
 # enable and start docker service
 systemctl enable docker.service
@@ -22,7 +22,8 @@ docker pull 163482350712.dkr.ecr.eu-west-1.amazonaws.com/$DOCKER_IMAGE
 
 # get env variables from parameter store
 mkdir -p /home/ec2-user/$APPLICATION_NAME
-aws ssm get-parameter --region eu-west-1 --name "/$DEPLOYMENT_GROUP_NAME/.env" --with-decryption --query "Parameter.Value" | sed -e 's/\\n/\n/g' -e 's/\\"/"/g' -e 's/^"//' -e 's/"$//' > /var/docker/.env
+mkdir -p /var/docker
+aws ssm get-parameter --region eu-west-1 --name "/tryber/clickday/api/$ENVIRONMENT/.env" --with-decryption --query "Parameter.Value" | sed -e 's/\\n/\n/g' -e 's/\\"/"/g' -e 's/^"//' -e 's/"$//' > /var/docker/.env
 
 source /var/docker/.env
 if test -f "$DOCKER_COMPOSE_FILE"; then
