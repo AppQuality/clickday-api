@@ -6,7 +6,7 @@ on:
       - release-*
 
 env:
-  ECR_REPOSITORY: openapi-base-project
+  ECR_REPOSITORY: clickday-api
   DEPLOY_PROD_BUCKET: openapi-base-project-source
   DEPLOY_PROD_KEY: openapi-base-project-pipeline/source.zip
   ASG_NAME: openapi-base-project-production

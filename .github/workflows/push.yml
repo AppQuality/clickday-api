@@ -2,11 +2,11 @@ name: Push image to ECR
 
 on:
   push:
-    branches: [develop]
+    branches: "*"
   workflow_dispatch:
 
 env:
-  ECR_REPOSITORY: openapi-base-project
+  ECR_REPOSITORY: clickday-api
 
 jobs:
   build:

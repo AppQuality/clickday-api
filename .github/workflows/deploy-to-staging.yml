@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  ECR_REPOSITORY: openapi-base-project
+  ECR_REPOSITORY: clickday-api
   DEPLOY_BUCKET: openapi-base-project-source
   DEPLOY_KEY: openapi-base-project-pipeline/source.zip
   PIPELINE: openapi-base-project-pipeline

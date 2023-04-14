@@ -1,7 +1,7 @@
 name: "Generate test coverage"
 on:
   push:
-    branches: [develop]
+    branches: "*"
   pull_request:
     branches: [develop, master]
 
