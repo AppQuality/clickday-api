@@ -17,6 +17,9 @@ export interface paths {
     /** Get all projects that you can view. A project is a collection of campaigns linked with your account. */
     get: operations["get-projects"];
   };
+  "/users/me": {
+    get: operations["get-users-me"];
+  };
 }
 
 export interface components {
@@ -196,6 +199,19 @@ export interface operations {
       };
       403: components["responses"]["NotAuthorized"];
       404: components["responses"]["NotFound"];
+    };
+  };
+  "get-users-me": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            id?: number;
+            name?: string;
+          };
+        };
+      };
     };
   };
 }
