@@ -13,16 +13,18 @@ export interface paths {
     /** A request to login with your username and password */
     post: operations["post-authenticate"];
   };
-  "/projects": {};
   "/users/me": {
+    /** Get logged user data */
     get: operations["get-users-me"];
   };
-  "/questions": {};
   "/attempts": {
+    /** Get all attempts of logged user */
     get: operations["get-attempts"];
+    /** Create a new attempt from a code */
     post: operations["post-attempts"];
   };
   "/attempts/{id}": {
+    /** Complete an attempt with a list of answers */
     post: operations["post-attempts-id"];
     parameters: {
       path: {
@@ -34,58 +36,10 @@ export interface paths {
 
 export interface components {
   schemas: {
-    /** Authentication */
-    Authentication: {
-      id: number;
-      /** Format: email */
-      email: string;
-      role: string;
-      name: string;
-      picture?: string;
-      token: string;
-      iat?: number;
-      exp?: number;
-    };
-    /** Error */
-    Error: {
-      message: string;
-      code: number;
-      error: boolean;
-    };
-    /** User */
-    User: {
-      username?: string;
-      name?: string;
-      surname?: string;
-      /** Format: email */
-      email?: string;
-      /** Format: uri */
-      image?: string;
-      id?: number;
-      wp_user_id?: number;
-      role?: string;
-      is_verified?: boolean;
-    };
-    /** Project */
-    Project: {
-      name?: string;
-    };
     SelectQuestionSlug: string;
     TextQuestionSlug: string;
   };
   responses: {
-    /** Example response */
-    Error: {
-      content: {
-        "application/json": components["schemas"]["Error"];
-      };
-    };
-    /** A user */
-    UserData: {
-      content: {
-        "application/json": components["schemas"]["User"];
-      };
-    };
     /** Authentication data. The token can be used to authenticate the protected requests */
     Authentication: {
       content: {
@@ -100,24 +54,6 @@ export interface components {
         };
       };
     };
-    /** An error due to the resource not existing */
-    NotFound: {
-      content: {
-        "application/json": {
-          element: string;
-          id: number;
-          message: string;
-        };
-      };
-    };
-    /** An error due to missing required parameters */
-    MissingParameters: {
-      content: {
-        "application/json": {
-          message: string;
-        };
-      };
-    };
     /** An error due to insufficient authorization to access the resource */
     NotAuthorized: {
       content: {
@@ -127,30 +63,7 @@ export interface components {
       };
     };
   };
-  parameters: {
-    /** @description A campaign id */
-    campaign: string;
-    /** @description A task id */
-    task: string;
-    /** @description A customer id */
-    customer: string;
-    /** @description A project id */
-    project: string;
-    /** @description Max items to retrieve */
-    limit: number;
-    /** @description Items to skip for pagination */
-    start: number;
-    /** @description Key-value Array for item filtering */
-    filterBy: { [key: string]: unknown };
-    /** @description How to order values (ASC, DESC) */
-    order: "ASC" | "DESC";
-    /** @description How to localize values */
-    locale: "en" | "it";
-    /** @description A comma separated list of fields which will be searched */
-    searchBy: string;
-    /** @description The value to search for */
-    search: string;
-  };
+  parameters: {};
 }
 
 export interface operations {
@@ -171,12 +84,7 @@ export interface operations {
     parameters: {};
     responses: {
       200: components["responses"]["Authentication"];
-      /** Unauthorized */
-      401: {
-        content: {
-          "application/json": string;
-        };
-      };
+      401: components["responses"]["NotAuthorized"];
     };
     /** A JSON containing username and password */
     requestBody: {
@@ -188,6 +96,7 @@ export interface operations {
       };
     };
   };
+  /** Get logged user data */
   "get-users-me": {
     responses: {
       /** OK */
@@ -201,6 +110,7 @@ export interface operations {
       };
     };
   };
+  /** Get all attempts of logged user */
   "get-attempts": {
     responses: {
       /** OK */
@@ -216,6 +126,7 @@ export interface operations {
       };
     };
   };
+  /** Create a new attempt from a code */
   "post-attempts": {
     responses: {
       /** OK */
@@ -252,6 +163,7 @@ export interface operations {
       };
     };
   };
+  /** Complete an attempt with a list of answers */
   "post-attempts-id": {
     parameters: {
       path: {
@@ -279,7 +191,9 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          slug: string;
+          slug:
+            | components["schemas"]["SelectQuestionSlug"]
+            | components["schemas"]["TextQuestionSlug"];
           answer: string;
         }[];
       };
