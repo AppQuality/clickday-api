@@ -121,6 +121,9 @@ paths:
                     type: number
                   name:
                     type: string
+                required:
+                  - id
+                  - name
               examples:
                 Example 1:
                   value:
