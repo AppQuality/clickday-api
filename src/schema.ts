@@ -62,6 +62,16 @@ export interface components {
         };
       };
     };
+    /** Example response */
+    Error: {
+      content: {
+        "application/json": {
+          message: string;
+          code: number;
+          error: boolean;
+        };
+      };
+    };
   };
   parameters: {};
 }
@@ -154,6 +164,7 @@ export interface operations {
           };
         };
       };
+      403: components["responses"]["Error"];
     };
     requestBody: {
       content: {
