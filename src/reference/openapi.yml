@@ -1,20 +1,20 @@
 openapi: 3.0.0
 info:
   title: AppQualityApi
-  version: "1.0"
+  version: '1.0'
   description: An API to get all data for your bugfinding and ux research needs!
   contact:
     name: Developers
     email: it@app-quality.com
 servers:
-  - url: "https://api.app-quality.com"
+  - url: 'https://api.app-quality.com'
 paths:
   /:
     get:
       summary: Get API description
       tags: []
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
@@ -33,9 +33,9 @@ paths:
       summary: Authenticate to the API
       operationId: post-authenticate
       responses:
-        "200":
-          $ref: "#/components/responses/Authentication"
-        "401":
+        '200':
+          $ref: '#/components/responses/Authentication'
+        '401':
           description: Unauthorized
           content:
             application/json:
@@ -73,7 +73,7 @@ paths:
       tags:
         - Projects
       responses:
-        "200":
+        '200':
           description: A list of projects
           content:
             application/json:
@@ -91,11 +91,10 @@ paths:
                           type: string
                         description:
                           type: string
-
-        "403":
-          $ref: "#/components/responses/NotAuthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '403':
+          $ref: '#/components/responses/NotAuthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
       operationId: get-projects
       parameters:
         - schema:
@@ -104,6 +103,33 @@ paths:
           in: query
           required: false
           description: A generic query parameter
+      security:
+        - JWT: []
+  /users/me:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                required:
+                  - id
+                  - name
+              examples:
+                Example 1:
+                  value:
+                    id: 123
+                    name: Pippo
+      operationId: get-users-me
       security:
         - JWT: []
 components:
@@ -165,7 +191,7 @@ components:
     User:
       title: User
       type: object
-      description: ""
+      description: ''
       properties:
         username:
           type: string
@@ -194,7 +220,7 @@ components:
             name: string
             surname: string
             email: user@example.com
-            image: "http://example.com"
+            image: 'http://example.com'
             id: 0
             wp_user_id: 0
             role: string
@@ -242,7 +268,7 @@ components:
     JWT:
       type: http
       scheme: bearer
-      description: ""
+      description: ''
   responses:
     Error:
       description: Example response
@@ -255,7 +281,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/User"
+            $ref: '#/components/schemas/User'
           examples:
             example:
               value:
@@ -400,7 +426,7 @@ components:
           - ASC
           - DESC
         default: DESC
-      description: "How to order values (ASC, DESC)"
+      description: 'How to order values (ASC, DESC)'
     locale:
       name: locale
       in: query
