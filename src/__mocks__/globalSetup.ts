@@ -1,4 +1,4 @@
-import { tryber } from "@src/features/database";
+import { clickDay, tryber } from "@src/features/database";
 
 expect.extend({
   toBeNow(received: number, precision: number = 0) {
@@ -13,9 +13,12 @@ expect.extend({
 export {};
 beforeAll(async () => {
   await tryber.create();
+  await clickDay.create();
 });
 
 afterAll(async () => {
+  await clickDay.drop();
+  await clickDay.destroy();
   await tryber.drop();
   await tryber.destroy();
 });
