@@ -15,12 +15,12 @@ export default class Route extends UserRoute<{
   }
 
   protected async prepare() {
-    const id = await this.createAttempt();
+    const { id, start_time } = await this.createAttempt();
     const email = await this.generateEmailQuestion(id);
 
     this.setSuccess(200, {
       id: 1,
-      startTime: "2021-01-01T00:00:00.000Z",
+      startTime: new Date(start_time).toISOString(),
       questions: [email],
     });
   }
@@ -32,7 +32,7 @@ export default class Route extends UserRoute<{
     });
 
     const attempt = await clickDay.tables.CdAttempts.do()
-      .select("id")
+      .select("id", "start_time")
       .where({
         agency_code: this.code,
         tester_id: this.getTesterId(),
@@ -41,7 +41,7 @@ export default class Route extends UserRoute<{
     if (!attempt) {
       throw new Error("Attempt not found");
     }
-    return attempt.id;
+    return attempt;
   }
 
   private async generateEmailQuestion(id: number) {

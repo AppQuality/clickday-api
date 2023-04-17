@@ -32,6 +32,17 @@ describe("GET /users/me", () => {
     expect(attempts[0].tester_id).toBe(1);
   });
 
+  it("Should return the current date of the attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const attempts = await clickDay.tables.CdAttempts.do().select();
+    expect(attempts.length).toBe(1);
+    expect(attempts[0].start_time).toBeNow(10);
+  });
+
   it("Should generate one email question on a new attempt", async () => {
     const response = await request(app)
       .post("/attempts")
@@ -41,6 +52,5 @@ describe("GET /users/me", () => {
     const question = await clickDay.tables.CdAttemptsQuestions.do().select();
     expect(question.length).toBe(1);
     expect(question[0].type).toBe("email");
-    console.log(response.body.questions);
   });
 });
