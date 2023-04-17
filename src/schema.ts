@@ -13,12 +13,22 @@ export interface paths {
     /** A request to login with your username and password */
     post: operations["post-authenticate"];
   };
-  "/projects": {
-    /** Get all projects that you can view. A project is a collection of campaigns linked with your account. */
-    get: operations["get-projects"];
-  };
+  "/projects": {};
   "/users/me": {
     get: operations["get-users-me"];
+  };
+  "/questions": {};
+  "/attempts": {
+    get: operations["get-attempts"];
+    post: operations["post-attempts"];
+  };
+  "/attempts/{id}": {
+    post: operations["post-attempts-id"];
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
   };
 }
 
@@ -60,6 +70,8 @@ export interface components {
     Project: {
       name?: string;
     };
+    SelectQuestionSlug: string;
+    TextQuestionSlug: string;
   };
   responses: {
     /** Example response */
@@ -176,31 +188,6 @@ export interface operations {
       };
     };
   };
-  /** Get all projects that you can view. A project is a collection of campaigns linked with your account. */
-  "get-projects": {
-    parameters: {
-      query: {
-        /** A generic query parameter */
-        "my-parameter"?: number;
-      };
-    };
-    responses: {
-      /** A list of projects */
-      200: {
-        content: {
-          "application/json": {
-            items?: {
-              id?: number;
-              name?: string;
-              description?: string;
-            }[];
-          };
-        };
-      };
-      403: components["responses"]["NotAuthorized"];
-      404: components["responses"]["NotFound"];
-    };
-  };
   "get-users-me": {
     responses: {
       /** OK */
@@ -211,6 +198,90 @@ export interface operations {
             name: string;
           };
         };
+      };
+    };
+  };
+  "get-attempts": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            id: number;
+            date: string;
+            time: string;
+            errors: number;
+          }[];
+        };
+      };
+    };
+  };
+  "post-attempts": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            id: number;
+            /** Format: date-time */
+            startTime: string;
+            questions: ({
+              title: string;
+            } & (
+              | {
+                  /** @enum {string} */
+                  type: "dropdown";
+                  options: string[];
+                  slug: components["schemas"]["SelectQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
+            ))[];
+          };
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          code: string;
+        };
+      };
+    };
+  };
+  "post-attempts-id": {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            elapsedTime: string;
+            success: boolean;
+            wrongAnswers?: {
+              slug:
+                | components["schemas"]["SelectQuestionSlug"]
+                | components["schemas"]["TextQuestionSlug"];
+              yourAnswer: string;
+              correctAnswer: string;
+            }[];
+          };
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          slug: string;
+          answer: string;
+        }[];
       };
     };
   };

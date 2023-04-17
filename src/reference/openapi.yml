@@ -66,45 +66,7 @@ paths:
                   password: my-strong-password
         description: A JSON containing username and password
       parameters: []
-  /projects:
-    get:
-      description: Get all projects that you can view. A project is a collection of campaigns linked with your account.
-      summary: Get All Projects
-      tags:
-        - Projects
-      responses:
-        '200':
-          description: A list of projects
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                        name:
-                          type: string
-                        description:
-                          type: string
-        '403':
-          $ref: '#/components/responses/NotAuthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      operationId: get-projects
-      parameters:
-        - schema:
-            type: number
-          name: my-parameter
-          in: query
-          required: false
-          description: A generic query parameter
-      security:
-        - JWT: []
+  /projects: {}
   /users/me:
     get:
       summary: Your GET endpoint
@@ -132,6 +94,261 @@ paths:
       operationId: get-users-me
       security:
         - JWT: []
+  /questions: {}
+  /attempts:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    date:
+                      type: string
+                    time:
+                      type: string
+                    errors:
+                      type: number
+                  required:
+                    - id
+                    - date
+                    - time
+                    - errors
+      operationId: get-attempts
+      security:
+        - JWT: []
+    post:
+      summary: ''
+      operationId: post-attempts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  startTime:
+                    type: string
+                    format: date-time
+                  questions:
+                    type: array
+                    items:
+                      allOf:
+                        - properties:
+                            title:
+                              type: string
+                          required:
+                            - title
+                        - oneOf:
+                            - properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - dropdown
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                              required:
+                                - type
+                                - options
+                                - slug
+                            - properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - text
+                                slug:
+                                  $ref: '#/components/schemas/TextQuestionSlug'
+                              required:
+                                - type
+                                - slug
+                      type: object
+                required:
+                  - id
+                  - startTime
+                  - questions
+              examples:
+                Example 1:
+                  value:
+                    id: 123
+                    startTime: '2019-08-24T14:15:22Z'
+                    questions:
+                      - type: dropdown
+                        slug: email
+                        title: Seleziona l'indirizzo email del partecipante (pippo@franco.me)
+                        options:
+                          - pippo@franco.me
+                          - ezio@greggio.me
+                          - papa@francesco.me
+                      - type: dropdown
+                        slug: month-vocals
+                        title: Seleziona le vocali del mese della data odierna (ao)
+                        options:
+                          - eaio
+                          - ao
+                          - aie
+                          - aio
+                          - iuo
+                          - uio
+                          - aoo
+                          - eee
+                          - ooe
+                          - iee
+                      - type: dropdown
+                        slug: last-numbers-bando
+                        title: Seleziona le ultime 2 cifre del bando (22)
+                        options:
+                          - '21'
+                          - '22'
+                          - '19'
+                          - '20'
+                          - '23'
+                      - type: dropdown
+                        slug: bando
+                        title: Seleziona il bando al quale stai partecipando (bando inail 2022)
+                        options:
+                          - bando inail 2021
+                          - bando inail 2022
+                          - bando inail 2023
+                          - bando altro 2023
+                          - bando inail 2019
+                          - bando inail 2020
+                      - type: dropdown
+                        slug: amount
+                        title: Seleziona l'importo dello stanziamento del bando (1€)
+                        options:
+                          - 1€
+                          - 2€
+                          - 3€
+                          - 4€
+                          - 5€
+                          - 6€
+                          - 7€
+                          - 8€
+                      - type: dropdown
+                        slug: axis
+                        title: Seleziona il numero degli assi di finanziamento (123)
+                        options:
+                          - '123'
+                          - '456'
+                          - '789'
+                          - '012'
+                          - '412'
+                          - '892'
+                      - type: dropdown
+                        slug: moment-date
+                        title: Seleziona la data del momento 1 (22/01/2023)
+                        options:
+                          - 22/01/2023
+                          - 23/01/2023
+                          - 24/01/2023
+                          - 25/01/2023
+                          - 26/01/2023
+                      - type: text
+                        slug: today
+                        title: Inserisci la data di oggi nel formato DD/MM/YYYY
+                      - type: text
+                        slug: first-characters
+                        title: Inserisci i primi 5 caratteri del codice alfanumerico
+      description: ''
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+                - code
+            examples:
+              Example 1:
+                value:
+                  code: '-6c9105e31b7d678349ad7b059ef1ebbd4ae610c26c5b70c2bbdea528173d2b03'
+  '/attempts/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-attempts-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  elapsedTime:
+                    type: string
+                  success:
+                    type: boolean
+                  wrongAnswers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        slug:
+                          oneOf:
+                            - $ref: '#/components/schemas/SelectQuestionSlug'
+                            - $ref: '#/components/schemas/TextQuestionSlug'
+                        yourAnswer:
+                          type: string
+                        correctAnswer:
+                          type: string
+                      required:
+                        - slug
+                        - yourAnswer
+                        - correctAnswer
+                required:
+                  - elapsedTime
+                  - success
+              examples:
+                Example 1:
+                  value:
+                    elapsedTime: '1200'
+                    success: false
+                    wrongAnswers:
+                      - slug: email
+                        yourAnswer: mario@rossi.me
+                        correctAnswer: pippo@franco.me
+      security:
+        - JWT: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  slug:
+                    type: string
+                  answer:
+                    type: string
+                required:
+                  - slug
+                  - answer
 components:
   schemas:
     Authentication:
@@ -264,6 +481,34 @@ components:
       properties:
         name:
           type: string
+    SelectQuestionSlug:
+      oneOf:
+        - enum:
+            - email
+            - bando
+            - last-numbers-bando
+        - enum:
+            - month-vocals
+            - amount
+            - axis
+        - enum:
+            - moment-date
+      type: string
+      x-examples: {}
+    TextQuestionSlug:
+      oneOf:
+        - enum:
+            - today
+            - tomorrow
+            - yesterday
+        - enum:
+            - first-characters
+            - first-numbers
+        - enum:
+            - last-characters
+            - last-numbers
+      type: string
+      x-examples: {}
   securitySchemes:
     JWT:
       type: http
