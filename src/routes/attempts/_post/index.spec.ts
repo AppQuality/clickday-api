@@ -15,9 +15,24 @@ describe("POST /attempts", () => {
   it("Should answer 200 if logged in", async () => {
     const response = await request(app)
       .post("/attempts")
-      .send({ code: "123" })
+      .send({ code: "+123" })
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
+  });
+
+  it("Should answer 400 if code is not sent", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(400);
+  });
+
+  it("Should answer 400 if code doesn't start with a sign +/-", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(400);
   });
 
   it("Should insert a new attempt on success", async () => {

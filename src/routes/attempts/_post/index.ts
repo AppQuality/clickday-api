@@ -18,6 +18,24 @@ export default class Route extends UserRoute<{
     this.date = "";
   }
 
+  protected async filter(): Promise<boolean> {
+    if (!this.code) {
+      this.setError(400, {
+        code: 400,
+        message: "Missing code",
+      } as OpenapiError);
+      return false;
+    }
+    if (!this.code.startsWith("+") && !this.code.startsWith("-")) {
+      this.setError(400, {
+        code: 400,
+        message: "Invalid code",
+      } as OpenapiError);
+      return false;
+    }
+    return true;
+  }
+
   protected async prepare() {
     const { id: attempt_id, start_time } = await this.createAttempt();
 
