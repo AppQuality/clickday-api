@@ -19,11 +19,12 @@ export default class Route extends UserRoute<{
 
     const email = await this.generateEmailQuestion(attempt_id);
     const vocalsOfMonth = await this.generateVocalsOfMonthQuestion(attempt_id);
+    const bando = await this.generateBandoQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
       startTime: new Date(start_time).toISOString(),
-      questions: [email, vocalsOfMonth],
+      questions: [email, vocalsOfMonth, bando],
     });
   }
 
@@ -58,7 +59,7 @@ export default class Route extends UserRoute<{
       "biagio.bruno@tryber.me",
     ];
     const correct = options[Math.floor(Math.random() * options.length)];
-    const insert = await clickDay.tables.CdAttemptsQuestions.do().insert({
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
       attempt_id,
       type: "email",
       correct_answer: correct,
@@ -101,6 +102,32 @@ export default class Route extends UserRoute<{
       title: `Seleziona la vocale del mese (${correct})`,
       slug: "month-vocals" as const,
       options: [...new Set(options)],
+    };
+  }
+
+  private async generateBandoQuestion(attempt_id: number) {
+    const options = [
+      "Bando 2018",
+      "Bando 2019",
+      "Bando 2020",
+      "Bando 2021",
+      "Bando 2022",
+      "Bando 2023",
+    ];
+
+    const correct = options[Math.floor(Math.random() * options.length)];
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "bando",
+      correct_answer: correct,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona il bando al quale stai partecipando (${correct})`,
+      slug: "bando" as const,
+      options,
     };
   }
 }
