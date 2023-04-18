@@ -102,7 +102,7 @@ describe("POST /attempts", () => {
 
     expect(response.body.questions).toBeDefined();
     expect(response.body.questions).toBeInstanceOf(Array);
-    expect(response.body.questions).toHaveLength(4); // Should be 9 questions in total
+    expect(response.body.questions).toHaveLength(5); // Should be 9 questions in total
 
     expect(response.body.questions).toEqual([
       expect.objectContaining({
@@ -116,6 +116,9 @@ describe("POST /attempts", () => {
       }),
       expect.objectContaining({
         slug: "last-numbers-bando",
+      }),
+      expect.objectContaining({
+        slug: "amount",
       }),
     ]);
   });
@@ -131,6 +134,22 @@ describe("POST /attempts", () => {
       expect.arrayContaining([
         expect.objectContaining({
           type: "last-numbers-bando",
+        }),
+      ])
+    );
+  });
+
+  it("Should generate one amount of bando question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "amount",
         }),
       ])
     );

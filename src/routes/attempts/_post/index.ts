@@ -25,11 +25,12 @@ export default class Route extends UserRoute<{
     const lastBandoNumbers = await this.generateLastBandoNumbersQuestion(
       attempt_id
     );
+    const amountOfBando = await this.generateAmountOfBandoQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
       startTime: new Date(start_time).toISOString(),
-      questions: [email, vocalsOfMonth, bando, lastBandoNumbers],
+      questions: [email, vocalsOfMonth, bando, lastBandoNumbers, amountOfBando],
     });
   }
 
@@ -156,6 +157,25 @@ export default class Route extends UserRoute<{
       type: "dropdown" as const,
       title: `Seleziona le ultime 2 cifre del bando (${correct})`,
       slug: "last-numbers-bando" as const,
+      options,
+    };
+  }
+
+  private async generateAmountOfBandoQuestion(attempt_id: number) {
+    const options = ["1", "2", "3", "4", "5", "6", "7", "8"];
+
+    const correct = options[Math.floor(Math.random() * options.length)];
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "amount",
+      correct_answer: correct,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona l'importo dello stanziamento del bando (${correct}€)`,
+      slug: "amount" as const,
       options,
     };
   }
