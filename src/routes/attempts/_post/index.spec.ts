@@ -2,7 +2,7 @@ import app from "@src/app";
 import { clickDay } from "@src/features/database";
 import request from "supertest";
 
-describe("GET /users/me", () => {
+describe("POST /attempts", () => {
   afterEach(async () => {
     await clickDay.tables.CdAttempts.do().delete();
     await clickDay.tables.CdAttemptsQuestions.do().delete();
@@ -50,7 +50,30 @@ describe("GET /users/me", () => {
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
     const question = await clickDay.tables.CdAttemptsQuestions.do().select();
-    expect(question.length).toBe(1);
-    expect(question[0].type).toBe("email");
+    //expect(question.length).toBe(9);
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "email",
+        }),
+      ])
+    );
+  });
+
+  it("Should generate one month-vocals question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    //expect(question.length).toBe(9);
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "month-vocals",
+        }),
+      ])
+    );
   });
 });

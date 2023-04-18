@@ -15,13 +15,15 @@ export default class Route extends UserRoute<{
   }
 
   protected async prepare() {
-    const { id, start_time } = await this.createAttempt();
-    const email = await this.generateEmailQuestion(id);
+    const { id: attempt_id, start_time } = await this.createAttempt();
+
+    const email = await this.generateEmailQuestion(attempt_id);
+    const vocalsOfMonth = await this.generateVocalsOfMonthQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
       startTime: new Date(start_time).toISOString(),
-      questions: [email],
+      questions: [email, vocalsOfMonth],
     });
   }
 
@@ -44,7 +46,7 @@ export default class Route extends UserRoute<{
     return attempt;
   }
 
-  private async generateEmailQuestion(id: number) {
+  private async generateEmailQuestion(attempt_id: number) {
     const options = [
       "alba.castiglione@tryber.me",
       "lillo.siciliano@tryber.me",
@@ -56,8 +58,8 @@ export default class Route extends UserRoute<{
       "biagio.bruno@tryber.me",
     ];
     const correct = options[Math.floor(Math.random() * options.length)];
-    await clickDay.tables.CdAttemptsQuestions.do().insert({
-      attempt_id: id,
+    const insert = await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
       type: "email",
       correct_answer: correct,
     });
@@ -67,6 +69,38 @@ export default class Route extends UserRoute<{
       title: `Seleziona l'indirizzo email del partecipante (${correct})`,
       slug: "email" as const,
       options,
+    };
+  }
+
+  private async generateVocalsOfMonthQuestion(attempt_id: number) {
+    const options = [
+      "eaio",
+      "eaio",
+      "ao",
+      "aie",
+      "aio",
+      "iuo",
+      "uio",
+      "ao",
+      "e",
+      "oe",
+      "oe",
+      "ie",
+    ];
+    const date = new Date();
+    const month = date.getMonth();
+    const correct = options[month];
+    const insert = await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "month-vocals",
+      correct_answer: correct,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona la vocale del mese (${correct})`,
+      slug: "month-vocals" as const,
+      options: [...new Set(options)],
     };
   }
 }
