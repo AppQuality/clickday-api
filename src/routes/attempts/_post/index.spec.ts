@@ -154,7 +154,7 @@ describe("POST /attempts", () => {
     );
   });
 
-  it("Should generate one today question on a new attempt", async () => {
+  it("Should generate one date question on a new attempt", async () => {
     const response = await request(app)
       .post("/attempts")
       .send({ code: "+123" })
@@ -164,7 +164,7 @@ describe("POST /attempts", () => {
     expect(question).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          type: expect.stringMatching(/(today|tomorrow|yesterday)/),
+          type: expect.stringMatching(/^(today|tomorrow|yesterday)$/),
         }),
       ])
     );
@@ -186,6 +186,26 @@ describe("POST /attempts", () => {
     );
   });
 
+  it("Should generate one code question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: expect.stringMatching(
+            /^(first-characters|first-numbers|last-characters|last-numbers)$/
+          ),
+        }),
+      ])
+    );
+  });
+
   // Should retrieve one question of each type on a new attempt
   it("Should retrieve one question of each type on a new attempt", async () => {
     const response = await request(app)
@@ -197,7 +217,7 @@ describe("POST /attempts", () => {
 
     expect(response.body.questions).toBeDefined();
     expect(response.body.questions).toBeInstanceOf(Array);
-    expect(response.body.questions).toHaveLength(8); // Should be 9 questions in total
+    expect(response.body.questions).toHaveLength(9); // Should be 9 questions in total
 
     expect(response.body.questions).toEqual([
       expect.objectContaining({
@@ -222,7 +242,12 @@ describe("POST /attempts", () => {
         slug: "moment-date",
       }),
       expect.objectContaining({
-        slug: expect.stringMatching(/(today|tomorrow|yesterday)/),
+        slug: expect.stringMatching(/^(today|tomorrow|yesterday)$/),
+      }),
+      expect.objectContaining({
+        slug: expect.stringMatching(
+          /^(first-characters|first-numbers|last-characters|last-numbers)$/
+        ),
       }),
     ]);
   });

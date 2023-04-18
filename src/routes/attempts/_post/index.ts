@@ -49,6 +49,7 @@ export default class Route extends UserRoute<{
     const axis = await this.generateAxisQuestion(attempt_id);
     const momentDate = await this.generateMomentDateQuestion(attempt_id);
     const date = await this.generateDateQuestion(attempt_id);
+    const code = await this.generateCodeQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
@@ -62,6 +63,7 @@ export default class Route extends UserRoute<{
         axis,
         momentDate,
         date,
+        code,
       ],
     });
   }
@@ -294,6 +296,51 @@ export default class Route extends UserRoute<{
     return {
       type: "text" as const,
       title: `Scrivi la data di ${this.date} in formato gg/mm/aaaa`,
+      slug: type,
+    };
+  }
+
+  private async generateCodeQuestion(attempt_id: number) {
+    const length = 5;
+
+    // Choose a random element from 0 to 3
+    const random = Math.floor(Math.random() * 4);
+
+    let type = "";
+    let correct = "";
+    let question = "";
+    switch (random) {
+      case 0:
+        type = "first-characters";
+        correct = this.code.slice(0, length);
+        question = `Scrivi i primi ${length} caratteri del codice`;
+        break;
+      case 1:
+        type = "last-characters";
+        correct = this.code.slice(-length);
+        question = `Scrivi gli ultimi ${length} caratteri del codice`;
+        break;
+      case 2:
+        type = "first-numbers";
+        correct = this.code.replace(/\D/g, "").slice(0, length);
+        question = `Scrivi i primi ${length} numeri del codice`;
+        break;
+      case 3:
+        type = "last-numbers";
+        correct = this.code.replace(/\D/g, "").slice(-length);
+        question = `Scrivi gli ultimi ${length} numeri del codice`;
+        break;
+    }
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type,
+      correct_answer: correct,
+    });
+
+    return {
+      type: "text" as const,
+      title: `${question} (${this.code})`,
       slug: type,
     };
   }
