@@ -46,19 +46,20 @@ export default class Route extends UserRoute<{
     >
   ) {
     return attempts.map((attempt) => {
-      const date = new Date(attempt.start_time).toISOString().split("T")[0];
+      const startDate = new Date(attempt.start_time);
+      const startDateString = `${startDate.getFullYear()}-${
+        startDate.getMonth() + 1
+      }-${startDate.getDate()}`;
 
-      const startTime = new Date(attempt.start_time).getMilliseconds();
+      const startTime = new Date(attempt.start_time).getTime();
       const endTime = attempt.end_time
-        ? new Date(attempt.end_time).getMilliseconds()
+        ? new Date(attempt.end_time).getTime()
         : 0;
-      console.log("startTime", startTime);
-      console.log("endTime", endTime);
 
       return {
         id: attempt.id,
-        date: date,
-        time: attempt.end_time ? (endTime - startTime).toString() : "0",
+        date: startDateString,
+        time: (attempt.end_time ? endTime - startTime : 0).toString(),
         code: attempt.agency_code,
         errors: attempt.errors ? Number(attempt.errors) : 0,
       };

@@ -68,25 +68,29 @@ describe("GET /attempts", () => {
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(3);
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date();
+    const todayString = `${today.getFullYear()}-${
+      today.getMonth() + 1
+    }-${today.getDate()}`;
+
     expect(response.body).toEqual([
       {
         id: 1,
-        date: today,
+        date: todayString,
         time: "10",
         code: "+asd123",
         errors: 0,
       },
       {
         id: 2,
-        date: today,
+        date: todayString,
         time: "10",
         code: "+asd123",
         errors: 4,
       },
       {
         id: 3,
-        date: today,
+        date: todayString,
         time: "0",
         code: "+asd123",
         errors: 0,
