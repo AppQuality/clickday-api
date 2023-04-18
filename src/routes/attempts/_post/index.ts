@@ -27,6 +27,7 @@ export default class Route extends UserRoute<{
     );
     const amountOfBando = await this.generateAmountOfBandoQuestion(attempt_id);
     const axis = await this.generateAxisQuestion(attempt_id);
+    const momentDate = await this.generateMomentDateQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
@@ -38,6 +39,7 @@ export default class Route extends UserRoute<{
         lastBandoNumbers,
         amountOfBando,
         axis,
+        momentDate,
       ],
     });
   }
@@ -201,6 +203,34 @@ export default class Route extends UserRoute<{
       type: "dropdown" as const,
       title: `Seleziona il codice dell'asse (${correct})`,
       slug: "axis" as const,
+      options,
+    };
+  }
+
+  private async generateMomentDateQuestion(attempt_id: number) {
+    // options are 5 dynamic dates with format DD/MM/YYYY that start from 2 days ago
+    const options = Array.from({ length: 5 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - 2 + i);
+      return date.toLocaleDateString("it-IT", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }); // YYYY/MM/DD
+    });
+
+    const correct = options[Math.floor(Math.random() * options.length)];
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "moment-date",
+      correct_answer: correct,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona la data del momento (${correct})`,
+      slug: "moment-date" as const,
       options,
     };
   }
