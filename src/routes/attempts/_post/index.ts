@@ -8,10 +8,12 @@ export default class Route extends UserRoute<{
   body: StoplightOperations["post-attempts"]["requestBody"]["content"]["application/json"];
 }> {
   private code: string;
+  private bando: string;
 
   constructor(configuration: RouteClassConfiguration) {
     super(configuration);
     this.code = this.getBody().code;
+    this.bando = "";
   }
 
   protected async prepare() {
@@ -20,11 +22,14 @@ export default class Route extends UserRoute<{
     const email = await this.generateEmailQuestion(attempt_id);
     const vocalsOfMonth = await this.generateVocalsOfMonthQuestion(attempt_id);
     const bando = await this.generateBandoQuestion(attempt_id);
+    const lastBandoNumbers = await this.generateLastBandoNumbersQuestion(
+      attempt_id
+    );
 
     this.setSuccess(200, {
       id: 1,
       startTime: new Date(start_time).toISOString(),
-      questions: [email, vocalsOfMonth, bando],
+      questions: [email, vocalsOfMonth, bando, lastBandoNumbers],
     });
   }
 
@@ -116,6 +121,7 @@ export default class Route extends UserRoute<{
     ];
 
     const correct = options[Math.floor(Math.random() * options.length)];
+    this.bando = correct;
 
     await clickDay.tables.CdAttemptsQuestions.do().insert({
       attempt_id,
@@ -127,6 +133,29 @@ export default class Route extends UserRoute<{
       type: "dropdown" as const,
       title: `Seleziona il bando al quale stai partecipando (${correct})`,
       slug: "bando" as const,
+      options,
+    };
+  }
+
+  private async generateLastBandoNumbersQuestion(attempt_id: number) {
+    const options = ["18", "19", "20", "21", "22", "23"];
+
+    // Get the last two digits of the bando
+    const correct = this.bando.slice(-2);
+
+    // Pick correct answer from options
+    const correctOption = options.find((option) => option === correct);
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "last-numbers-bando",
+      correct_answer: correctOption,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona le ultime 2 cifre del bando (${correct})`,
+      slug: "last-numbers-bando" as const,
       options,
     };
   }
