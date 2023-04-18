@@ -76,4 +76,46 @@ describe("POST /attempts", () => {
       ])
     );
   });
+
+  it("Should generate one bando question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    //expect(question.length).toBe(9);
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "bando",
+        }),
+      ])
+    );
+  });
+
+  // Should retrieve one question of each type on a new attempt
+  it("Should retrieve one question of each type on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+
+    expect(response.status).toBe(200);
+
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+
+    expect(response.body.questions).toEqual([
+      expect.objectContaining({
+        slug: "email",
+      }),
+      expect.objectContaining({
+        slug: "month-vocals",
+      }),
+      expect.objectContaining({
+        slug: "bando",
+      }),
+    ]);
+  });
 });
