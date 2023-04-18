@@ -26,11 +26,19 @@ export default class Route extends UserRoute<{
       attempt_id
     );
     const amountOfBando = await this.generateAmountOfBandoQuestion(attempt_id);
+    const axis = await this.generateAxisQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
       startTime: new Date(start_time).toISOString(),
-      questions: [email, vocalsOfMonth, bando, lastBandoNumbers, amountOfBando],
+      questions: [
+        email,
+        vocalsOfMonth,
+        bando,
+        lastBandoNumbers,
+        amountOfBando,
+        axis,
+      ],
     });
   }
 
@@ -176,6 +184,23 @@ export default class Route extends UserRoute<{
       type: "dropdown" as const,
       title: `Seleziona l'importo dello stanziamento del bando (${correct}€)`,
       slug: "amount" as const,
+      options,
+    };
+  }
+
+  private async generateAxisQuestion(attempt_id: number) {
+    const options = ["123", "456", "789", "012", "412", "892"];
+    const correct = options[Math.floor(Math.random() * options.length)];
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "axis",
+      correct_answer: correct,
+    });
+
+    return {
+      type: "dropdown" as const,
+      title: `Seleziona il codice dell'asse (${correct})`,
+      slug: "axis" as const,
       options,
     };
   }

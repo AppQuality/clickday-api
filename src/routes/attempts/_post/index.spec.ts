@@ -91,38 +91,6 @@ describe("POST /attempts", () => {
     );
   });
 
-  // Should retrieve one question of each type on a new attempt
-  it("Should retrieve one question of each type on a new attempt", async () => {
-    const response = await request(app)
-      .post("/attempts")
-      .send({ code: "+123" })
-      .set("authorization", "Bearer tester");
-
-    expect(response.status).toBe(200);
-
-    expect(response.body.questions).toBeDefined();
-    expect(response.body.questions).toBeInstanceOf(Array);
-    expect(response.body.questions).toHaveLength(5); // Should be 9 questions in total
-
-    expect(response.body.questions).toEqual([
-      expect.objectContaining({
-        slug: "email",
-      }),
-      expect.objectContaining({
-        slug: "month-vocals",
-      }),
-      expect.objectContaining({
-        slug: "bando",
-      }),
-      expect.objectContaining({
-        slug: "last-numbers-bando",
-      }),
-      expect.objectContaining({
-        slug: "amount",
-      }),
-    ]);
-  });
-
   it("Should generate one last-numbers-bando question on a new attempt", async () => {
     const response = await request(app)
       .post("/attempts")
@@ -153,5 +121,56 @@ describe("POST /attempts", () => {
         }),
       ])
     );
+  });
+
+  it("Should generate one axis question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "axis",
+        }),
+      ])
+    );
+  });
+
+  // Should retrieve one question of each type on a new attempt
+  it("Should retrieve one question of each type on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+
+    expect(response.status).toBe(200);
+
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+    expect(response.body.questions).toHaveLength(6); // Should be 9 questions in total
+
+    expect(response.body.questions).toEqual([
+      expect.objectContaining({
+        slug: "email",
+      }),
+      expect.objectContaining({
+        slug: "month-vocals",
+      }),
+      expect.objectContaining({
+        slug: "bando",
+      }),
+      expect.objectContaining({
+        slug: "last-numbers-bando",
+      }),
+      expect.objectContaining({
+        slug: "amount",
+      }),
+      expect.objectContaining({
+        slug: "axis",
+      }),
+    ]);
   });
 });
