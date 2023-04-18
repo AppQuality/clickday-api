@@ -149,7 +149,7 @@ describe("POST /attempts", () => {
     expect(question).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          type: "today",
+          type: expect.stringMatching(/(today|tomorrow|yesterday)/),
         }),
       ])
     );
@@ -207,7 +207,7 @@ describe("POST /attempts", () => {
         slug: "moment-date",
       }),
       expect.objectContaining({
-        slug: "today",
+        slug: expect.stringMatching(/(today|tomorrow|yesterday)/),
       }),
     ]);
   });

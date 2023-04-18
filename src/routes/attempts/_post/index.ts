@@ -243,13 +243,29 @@ export default class Route extends UserRoute<{
     // Choose a random element from -1 to 1
     const random = Math.floor(Math.random() * 3) - 1;
 
+    let type = "";
+    switch (random) {
+      case -1:
+        this.date = "ieri";
+        type = "yesterday";
+        break;
+      case 0:
+        this.date = "oggi";
+        type = "today";
+        break;
+      case 1:
+        this.date = "domani";
+        type = "tomorrow";
+        break;
+    }
+
     // Correct answer is yesterday (-1), today (0) or tomorrow (1)
     const date = new Date();
     date.setDate(date.getDate() + random);
 
     await clickDay.tables.CdAttemptsQuestions.do().insert({
       attempt_id,
-      type: "today", // TODO: rename to date
+      type,
       correct_answer: date.toLocaleDateString("it-IT", {
         day: "2-digit",
         month: "2-digit",
@@ -257,22 +273,10 @@ export default class Route extends UserRoute<{
       }), // DD/MM/YYYY
     });
 
-    switch (random) {
-      case -1:
-        this.date = "ieri";
-        break;
-      case 0:
-        this.date = "oggi";
-        break;
-      case 1:
-        this.date = "domani";
-        break;
-    }
-
     return {
       type: "text" as const,
       title: `Scrivi la data di ${this.date} in formato gg/mm/aaaa`,
-      slug: "today" as const, // TODO: rename to date
+      slug: type,
     };
   }
 }
