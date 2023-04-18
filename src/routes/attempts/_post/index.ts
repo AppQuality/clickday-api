@@ -9,11 +9,13 @@ export default class Route extends UserRoute<{
 }> {
   private code: string;
   private bando: string;
+  private date: string;
 
   constructor(configuration: RouteClassConfiguration) {
     super(configuration);
     this.code = this.getBody().code;
     this.bando = "";
+    this.date = "";
   }
 
   protected async prepare() {
@@ -28,6 +30,7 @@ export default class Route extends UserRoute<{
     const amountOfBando = await this.generateAmountOfBandoQuestion(attempt_id);
     const axis = await this.generateAxisQuestion(attempt_id);
     const momentDate = await this.generateMomentDateQuestion(attempt_id);
+    const date = await this.generateDateQuestion(attempt_id);
 
     this.setSuccess(200, {
       id: 1,
@@ -40,6 +43,7 @@ export default class Route extends UserRoute<{
         amountOfBando,
         axis,
         momentDate,
+        date,
       ],
     });
   }
@@ -107,7 +111,7 @@ export default class Route extends UserRoute<{
     const date = new Date();
     const month = date.getMonth();
     const correct = options[month];
-    const insert = await clickDay.tables.CdAttemptsQuestions.do().insert({
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
       attempt_id,
       type: "month-vocals",
       correct_answer: correct,
@@ -232,6 +236,43 @@ export default class Route extends UserRoute<{
       title: `Seleziona la data del momento (${correct})`,
       slug: "moment-date" as const,
       options,
+    };
+  }
+
+  private async generateDateQuestion(attempt_id: number) {
+    // Choose a random element from -1 to 1
+    const random = Math.floor(Math.random() * 3) - 1;
+
+    // Correct answer is yesterday (-1), today (0) or tomorrow (1)
+    const date = new Date();
+    date.setDate(date.getDate() + random);
+
+    await clickDay.tables.CdAttemptsQuestions.do().insert({
+      attempt_id,
+      type: "today", // TODO: rename to date
+      correct_answer: date.toLocaleDateString("it-IT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }), // DD/MM/YYYY
+    });
+
+    switch (random) {
+      case -1:
+        this.date = "ieri";
+        break;
+      case 0:
+        this.date = "oggi";
+        break;
+      case 1:
+        this.date = "domani";
+        break;
+    }
+
+    return {
+      type: "text" as const,
+      title: `Scrivi la data di ${this.date} in formato gg/mm/aaaa`,
+      slug: "today" as const, // TODO: rename to date
     };
   }
 }

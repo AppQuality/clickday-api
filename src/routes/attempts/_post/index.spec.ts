@@ -107,7 +107,7 @@ describe("POST /attempts", () => {
     );
   });
 
-  it("Should generate one amount of bando question on a new attempt", async () => {
+  it("Should generate one amount question on a new attempt", async () => {
     const response = await request(app)
       .post("/attempts")
       .send({ code: "+123" })
@@ -134,6 +134,22 @@ describe("POST /attempts", () => {
       expect.arrayContaining([
         expect.objectContaining({
           type: "axis",
+        }),
+      ])
+    );
+  });
+
+  it("Should generate one today question on a new attempt", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const question = await clickDay.tables.CdAttemptsQuestions.do().select();
+    expect(question).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "today",
         }),
       ])
     );
@@ -166,7 +182,7 @@ describe("POST /attempts", () => {
 
     expect(response.body.questions).toBeDefined();
     expect(response.body.questions).toBeInstanceOf(Array);
-    expect(response.body.questions).toHaveLength(7); // Should be 9 questions in total
+    expect(response.body.questions).toHaveLength(8); // Should be 9 questions in total
 
     expect(response.body.questions).toEqual([
       expect.objectContaining({
@@ -189,6 +205,9 @@ describe("POST /attempts", () => {
       }),
       expect.objectContaining({
         slug: "moment-date",
+      }),
+      expect.objectContaining({
+        slug: "today",
       }),
     ]);
   });
