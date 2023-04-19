@@ -17,7 +17,6 @@ describe("POST /attempts", () => {
       .post("/attempts")
       .send({ code: "+123" })
       .set("authorization", "Bearer tester");
-    console.info(response.body.questions);
     expect(response.status).toBe(200);
   });
 
