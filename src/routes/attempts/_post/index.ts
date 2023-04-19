@@ -1,4 +1,5 @@
 /** OPENAPI-CLASS: post-attempts */
+import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
 import BandoAmountQuestion from "./questions/BandoAmountQuestion";
@@ -24,17 +25,11 @@ export default class Route extends UserRoute<{
 
   protected async filter(): Promise<boolean> {
     if (!this.code) {
-      this.setError(400, {
-        code: 400,
-        message: "Missing code",
-      } as OpenapiError);
+      this.setError(400, new OpenapiError("Missing code"));
       return false;
     }
     if (!this.code.startsWith("+") && !this.code.startsWith("-")) {
-      this.setError(400, {
-        code: 400,
-        message: "Invalid code",
-      } as OpenapiError);
+      this.setError(400, new OpenapiError("Invalid code"));
       return false;
     }
     return true;
