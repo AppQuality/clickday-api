@@ -62,7 +62,7 @@ services:
       options:
         awslogs-region: eu-west-1
         awslogs-group: "${PROJECT_NAME}-${ENVIRONMENT}-${ENVIRONMENT}"
-        awslogs-stream: ${INSTANCE_ID}
+        awslogs-stream: ${DOCKER_IMAGE}
         awslogs-create-group: 'true'
 " > $DOCKER_COMPOSE_FILE
 
