@@ -2,7 +2,14 @@
 
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
-
+interface Attempt {
+  id: number;
+  tester_id: number;
+  agency_code: string;
+  start_time: string;
+  end_time: string | null;
+  errors: number | null;
+}
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-attempts-id"]["responses"]["200"]["content"]["application/json"];
   body: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["application/json"];
@@ -107,6 +114,42 @@ export default class Route extends UserRoute<{
     const attempt = await this.getAttempt();
     if (!attempt) return false;
     const endTime = new Date();
+    await this.updateEndDate(endTime, attempt);
+    const wrongAnswers = await this.getWrongAnswers();
+
+    const elapsedTime =
+      endTime.getTime() - new Date(attempt.start_time).getTime();
+    return {
+      elapsedTime: elapsedTime,
+      success: wrongAnswers.length === 0,
+      ...(wrongAnswers.length > 0 && { wrongAnswers }),
+    };
+  }
+
+  private async getWrongAnswers() {
+    const correctAnswers = await this.getCorrectAnswers();
+    let wrongAnswers = this.answers
+      .filter((a) => {
+        const correctAnswer = correctAnswers.find(
+          (c) => c.type === a.slug
+        )?.correct_answer;
+        if (correctAnswer !== a.answer) {
+          return true;
+        }
+        return false;
+      })
+      .map((a) => {
+        return {
+          slug: a.slug,
+          yourAnswer: a.answer,
+          correctAnswer:
+            correctAnswers.find((c) => c.type === a.slug)?.correct_answer || "",
+        };
+      });
+    return wrongAnswers;
+  }
+
+  private async updateEndDate(endTime: Date, attempt: Attempt) {
     await clickDay.tables.CdAttempts.do()
       .update({
         end_time:
@@ -125,11 +168,12 @@ export default class Route extends UserRoute<{
           endTime.getMilliseconds(),
       })
       .where({ id: attempt.id });
-    const elapsedTime =
-      endTime.getTime() - new Date(attempt.start_time).getTime();
-    return {
-      elapsedTime: elapsedTime,
-      success: true,
-    };
+  }
+
+  private async getCorrectAnswers() {
+    const correctAnswers = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("type", "correct_answer")
+      .where({ attempt_id: this.attempt_id });
+    return correctAnswers;
   }
 }

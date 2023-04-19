@@ -132,4 +132,45 @@ describe("POST /attempts/:id", () => {
       .first();
     expect(res?.end_time).not.toBeNull();
   });
+
+  //Should return correct answer for email question
+  it("Should return wrong answer for email when send wrong data", async () => {
+    const responseStart = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+    //get correct answer for email question
+    const result = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("correct_answer")
+      .where({ attempt_id: responseStart.body.id, type: "email" })
+      .first();
+    const correctAnswer = result?.correct_answer;
+    const responseBody = body;
+    responseBody[0].answer = "";
+    const responseEnd = await request(app)
+      .post(`/attempts/${responseStart.body.id}`)
+      .send(responseBody)
+      .set("authorization", "Bearer tester");
+    expect(responseEnd.body.success).toBe(false);
+    expect(responseEnd.body.wrongAnswers).toBeDefined();
+    expect(responseEnd.body.wrongAnswers[0].slug).toBe("email");
+    expect(responseEnd.body.wrongAnswers[0].yourAnswer).toBe("");
+    expect(responseEnd.body.wrongAnswers[0].correctAnswer).toBe(correctAnswer);
+  });
+
+  //Should return correct answer for bando question
+  //Should return correct answer for last-numbers-bando question
+  //Should return correct answer for month-vocals question
+  //Should return correct answer for amount question
+  //Should return correct answer for axis question
+  //Should return correct answer for moment-date question
+  //Should return correct answer for today question
+  //Should return correct answer for tomorrow question
+  //Should return correct answer for yesterday question
+  //Should return correct answer for first-characters question
+  //Should return correct answer for last-characters question
+  //Should return correct answer for first-numbers question
+  //Should return correct answer for last-numbers question
 });
