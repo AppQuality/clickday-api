@@ -31,7 +31,6 @@ describe("Authenticate", () => {
       username: "admin",
       password: "admin",
     });
-    console.log(response.body);
     expect(response.status).toBe(200);
   });
 
