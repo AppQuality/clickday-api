@@ -33,7 +33,11 @@ if test -f "$DOCKER_COMPOSE_FILE"; then
     if [ "$IS_RUNNING" -eq "1" ]; then
         docker-compose -f $DOCKER_COMPOSE_FILE down
     fi
-fi
+fi    
+
+arrIN=(${DOCKER_IMAGE//:/ })
+DOCKER_IMAGE_TAG=${arrIN[1]}   
+
 
 echo "
 version: '3'
@@ -66,7 +70,7 @@ services:
       options:
         awslogs-region: eu-west-1
         awslogs-group: "${PROJECT_NAME}-${ENVIRONMENT}-${ENVIRONMENT}"
-        awslogs-stream: ${DOCKER_IMAGE}
+        awslogs-stream: ${DOCKER_IMAGE_TAG}
         awslogs-create-group: 'true'
 " > $DOCKER_COMPOSE_FILE
 
