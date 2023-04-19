@@ -67,7 +67,7 @@ export default class Route extends UserRoute<{
 
   protected async prepare() {
     this.setSuccess(200, {
-      elapsedTime: "",
+      elapsedTime: 0,
       success: true,
     });
   }
