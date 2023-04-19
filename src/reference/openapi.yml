@@ -300,7 +300,7 @@ paths:
                 type: object
                 properties:
                   elapsedTime:
-                    type: string
+                    type: integer
                   success:
                     type: boolean
                   wrongAnswers:

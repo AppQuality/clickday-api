@@ -186,7 +186,7 @@ export interface operations {
       200: {
         content: {
           "application/json": {
-            elapsedTime: string;
+            elapsedTime: number;
             success: boolean;
             wrongAnswers?: {
               slug:
