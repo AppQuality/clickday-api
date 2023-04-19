@@ -28,11 +28,13 @@ export default class AuthRoute extends Route<{
     try {
       userData = await getUserByName(this.username);
     } catch (e) {
+      console.log(e);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
 
     if (userData instanceof Error) {
+      console.log(userData);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
@@ -52,6 +54,7 @@ export default class AuthRoute extends Route<{
     const data = await authenticate(userData);
 
     if (data instanceof Error) {
+      console.log(data);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
