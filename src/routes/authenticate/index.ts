@@ -28,11 +28,13 @@ export default class AuthRoute extends Route<{
     try {
       userData = await getUserByName(this.username);
     } catch (e) {
+      console.log(e);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
 
     if (userData instanceof Error) {
+      console.log(userData);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
@@ -52,6 +54,7 @@ export default class AuthRoute extends Route<{
     const data = await authenticate(userData);
 
     if (data instanceof Error) {
+      console.log(data);
       this.setError(401, new OpenapiError("Invalid data"));
       return;
     }
@@ -65,7 +68,7 @@ export default class AuthRoute extends Route<{
     };
 
     const token = jwt.sign(user, config.jwt.secret, {
-      expiresIn: process.env.JWT_EXPIRATION, // token expires in 15 minutes
+      expiresIn: process.env.JWT_EXPIRATION || 9000,
     });
     const tokenData = jwt.decode(token);
     if (tokenData === null || typeof tokenData === "string") {
