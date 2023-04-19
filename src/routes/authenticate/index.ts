@@ -68,7 +68,7 @@ export default class AuthRoute extends Route<{
     };
 
     const token = jwt.sign(user, config.jwt.secret, {
-      expiresIn: process.env.JWT_EXPIRATION, // token expires in 15 minutes
+      expiresIn: process.env.JWT_EXPIRATION || 9000,
     });
     const tokenData = jwt.decode(token);
     if (tokenData === null || typeof tokenData === "string") {
