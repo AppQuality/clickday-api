@@ -31,11 +31,6 @@ describe("POST /attempts/:id", () => {
     await clickDay.tables.CdAttempts.do().delete();
     await clickDay.tables.CdAttemptsQuestions.do().delete();
   });
-  it("Should answer 403 if not logged in", async () => {
-    const response = await request(app).post("/attempts/1");
-    expect(response.status).toBe(403);
-  });
-
   it("Should answer 400 if request body length is not 9", async () => {
     const response = await request(app)
       .post("/attempts/1")
@@ -50,6 +45,27 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester")
       .send(wrongSlugInBody);
     expect(response.status).toBe(400);
+  });
+
+  it("Should answer 403 if not logged in", async () => {
+    const response = await request(app).post("/attempts/1");
+    expect(response.status).toBe(403);
+  });
+
+  it("Should return 403 if the attempt is already completed", async () => {
+    const id = await clickDay.tables.CdAttempts.do().insert({
+      agency_code: "+31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      start_time: "2023-04-19 09:16:34",
+      end_time: "2023-04-19 09:17:34",
+      errors: 0,
+      tester_id: 1,
+    });
+    const response = await request(app)
+      .post(`/attempts/${id}`)
+      .send(body)
+      .set("authorization", "Bearer tester");
+
+    expect(response.status).toBe(403);
   });
 
   it("Should answer 404 if attempId does not exist", async () => {
@@ -75,5 +91,45 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
 
     expect(response.status).toBe(200);
+  });
+
+  it("Should return the elapsedTime", async () => {
+    const responseStart = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+    const responseEnd = await request(app)
+      .post(`/attempts/${responseStart.body.id}`)
+      .send(body)
+      .set("authorization", "Bearer tester");
+    expect(responseEnd.body.elapsedTime).toBeGreaterThan(0);
+    const res = await clickDay.tables.CdAttempts.do()
+      .select("end_time", "start_time")
+      .where({ id: responseStart.body.id })
+      .first();
+    if (res && res.end_time && res.start_time) {
+      const checkElapsedTime =
+        new Date(res?.end_time).getTime() - new Date(res?.start_time).getTime();
+      expect(checkElapsedTime).toEqual(responseEnd.body.elapsedTime);
+    }
+  });
+
+  it("Should update end_date for the attempt", async () => {
+    const id = await clickDay.tables.CdAttempts.do().insert({
+      agency_code: "+31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      start_time: "2023-04-19 09:16:34",
+      tester_id: 1,
+    });
+    await request(app)
+      .post(`/attempts/${id[0]}`)
+      .send(body)
+      .set("authorization", "Bearer tester");
+    const res = await clickDay.tables.CdAttempts.do()
+      .select("end_time")
+      .where({ id: id[0] })
+      .first();
+    expect(res?.end_time).not.toBeNull();
   });
 });

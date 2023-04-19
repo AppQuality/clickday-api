@@ -54,7 +54,16 @@ export default class Route extends UserRoute<{
       } as OpenapiError);
       return false;
     }
-    if (!this.attempt_id || (await this.attemptNotExist())) {
+
+    if (await this.attemptIsCompleted()) {
+      this.setError(403, {
+        code: 403,
+        message: "Attempt already finished",
+      } as OpenapiError);
+      return false;
+    }
+
+    if (!(await this.getAttempt())) {
       this.setError(404, {
         code: 404,
         message: "Attempt not found",
@@ -66,17 +75,61 @@ export default class Route extends UserRoute<{
   }
 
   protected async prepare() {
-    this.setSuccess(200, {
-      elapsedTime: 0,
-      success: true,
-    });
+    const attempt = await this.getresults();
+    if (!attempt) {
+      this.setError(404, {
+        code: 404,
+        message: "Attempt not found",
+      } as OpenapiError);
+      return;
+    }
+    this.setSuccess(200, attempt);
   }
 
-  private async attemptNotExist() {
+  private async getAttempt() {
+    const attempt = await clickDay.tables.CdAttempts.do()
+      .select()
+      .where({ id: this.attempt_id })
+      .first();
+    return attempt ?? false;
+  }
+
+  private async attemptIsCompleted() {
     const attempt = await clickDay.tables.CdAttempts.do()
       .select("id")
       .where({ id: this.attempt_id })
+      .whereNotNull("end_time")
       .first();
-    return !attempt;
+    return attempt !== undefined;
+  }
+
+  private async getresults() {
+    const attempt = await this.getAttempt();
+    if (!attempt) return false;
+    const endTime = new Date();
+    await clickDay.tables.CdAttempts.do()
+      .update({
+        end_time:
+          endTime.getFullYear() +
+          "-" +
+          (endTime.getMonth() + 1) +
+          "-" +
+          endTime.getDate() +
+          " " +
+          endTime.getHours() +
+          ":" +
+          endTime.getMinutes() +
+          ":" +
+          endTime.getSeconds() +
+          "." +
+          endTime.getMilliseconds(),
+      })
+      .where({ id: attempt.id });
+    const elapsedTime =
+      endTime.getTime() - new Date(attempt.start_time).getTime();
+    return {
+      elapsedTime: elapsedTime,
+      success: true,
+    };
   }
 }
