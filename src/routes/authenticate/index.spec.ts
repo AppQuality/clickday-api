@@ -41,4 +41,7 @@ describe("Authenticate", () => {
     });
     expect(response.status).toBe(401);
   });
+  it("should test test", async () => {
+    expect(1).toBe(1);
+  });
 });
