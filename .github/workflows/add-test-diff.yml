@@ -1,0 +1,61 @@
+name: Add new tests to PR
+
+on:
+  pull_request:
+
+jobs:
+  test-pr:
+    name: Get test difference
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.results.outputs.has_changes }}
+      tests_before: ${{ steps.results.outputs.tests_before }}
+      tests_after: ${{ steps.results.outputs.tests_after }}
+      diff: ${{ steps.results.outputs.diff }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+
+      - name: Get target tests
+        id: target-branch
+        run: |
+          yarn
+          TESTS=$(yarn -s test:ls 2>/dev/null)
+          echo "tests_before=${TESTS}" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get current branch tests
+        id: current-branch
+        run: |
+          yarn
+          TESTS=$(yarn -s test:ls 2>/dev/null)
+          echo "tests_after=${TESTS}" >> $GITHUB_OUTPUT
+
+      - name: Get diff
+        id: test-diff
+        run: |
+          echo "${{ steps.current-branch.outputs.tests_before }}" > origin.txt
+          echo "${{ steps.current-branch.outputs.tests_after }}" > branch.txt
+          DIFF=$(diff origin.txt branch.txt)
+          if [ ! -z "$DIFF" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+          echo "diff=${DIFF}" >> $GITHUB_OUTPUT
+
+  comment-pr:
+    runs-on: ubuntu-latest
+    needs: [test-pr]
+    if: needs.test-per.outputs.has_changes == 'true'
+    steps:
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            # Modifiche ai test
+            ${{ needs.test-pr.outputs.diff }}
+          comment_tag: test-diff
