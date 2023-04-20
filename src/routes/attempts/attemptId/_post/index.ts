@@ -113,9 +113,9 @@ export default class Route extends UserRoute<{
   private async getresults() {
     const attempt = await this.getAttempt();
     if (!attempt) return false;
-    const endTime = new Date();
-    await this.updateEndDate(endTime, attempt);
     const wrongAnswers = await this.getWrongAnswers();
+    const endTime = new Date();
+    await this.updateAttempt(wrongAnswers.length ?? 0, endTime, attempt);
 
     const elapsedTime =
       endTime.getTime() - new Date(attempt.start_time).getTime();
@@ -149,7 +149,7 @@ export default class Route extends UserRoute<{
     return wrongAnswers;
   }
 
-  private async updateEndDate(endTime: Date, attempt: Attempt) {
+  private async updateAttempt(errors: number, endTime: Date, attempt: Attempt) {
     await clickDay.tables.CdAttempts.do()
       .update({
         end_time:
@@ -166,6 +166,7 @@ export default class Route extends UserRoute<{
           endTime.getSeconds() +
           "." +
           endTime.getMilliseconds(),
+        errors,
       })
       .where({ id: attempt.id });
   }

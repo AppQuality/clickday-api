@@ -543,4 +543,51 @@ describe("POST /attempts/:id", () => {
     expect(responseEnd.body.success).toBe(true);
     expect(responseEnd.body.wrongAnswers).not.toBeDefined();
   });
+
+  // Should return number of errors if send any wrong answers
+  it("Should return number of errors if send any wrong answers", async () => {
+    // Start attempt
+    const attemptStartRequest = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    // Get correct answer for email question
+    const resultCorrect = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("correct_answer")
+      .where({ attempt_id: attemptStartRequest.body.id, type: "email" })
+      .first();
+    const correctAnswerEmail = resultCorrect?.correct_answer;
+
+    // Update request body with correct answer
+    const requestBody = body;
+    body.find((item, index) => {
+      if (item.slug === "email") {
+        requestBody[index] = {
+          slug: "email",
+          answer: correctAnswerEmail ?? "",
+        };
+        return true;
+      }
+    });
+
+    // Finish attempt
+    const responseEnd = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBody)
+      .set("authorization", "Bearer tester");
+
+    expect(responseEnd.body.success).toBe(false);
+    expect(responseEnd.body.wrongAnswers).toBeDefined();
+
+    // Check if errors are stored in database correctly
+    const result = await clickDay.tables.CdAttempts.do()
+      .select("errors")
+      .where({ id: attemptStartRequest.body.id })
+      .first();
+
+    expect(result?.errors).toBe(responseEnd.body.wrongAnswers.length);
+  });
 });
