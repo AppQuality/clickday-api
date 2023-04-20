@@ -15,17 +15,6 @@ const body: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["a
     { slug: "first-characters", answer: "a" },
   ];
 
-const wrongSlugInBody = [
-  { slug: "email", answer: "" },
-  { slug: "bando", answer: "" },
-  { slug: "last-numbers-bando", answer: "" },
-  { slug: "month-vocals", answer: "" },
-  { slug: "amount", answer: "" },
-  { slug: "axis", answer: "" },
-  { slug: "moment-date", answer: "" },
-  { slug: "today", answer: "" },
-  { slug: "not-allowed-slug", answer: "" },
-];
 describe("POST /attempts/:id", () => {
   afterEach(async () => {
     await clickDay.tables.CdAttempts.do().delete();
@@ -40,6 +29,14 @@ describe("POST /attempts/:id", () => {
   });
 
   it("Should answer 400 if request body send an item with a not allowed slug", async () => {
+    // Set wrong slug in body
+    const wrongSlugInBody = body.map((item) => {
+      if (item.slug === "email") {
+        return { ...item, slug: "wrong-slug" };
+      }
+      return item;
+    });
+
     const response = await request(app)
       .post("/attempts/1")
       .set("authorization", "Bearer tester")
@@ -147,17 +144,26 @@ describe("POST /attempts/:id", () => {
       .where({ attempt_id: responseStart.body.id, type: "email" })
       .first();
     const correctAnswer = result?.correct_answer;
-    const responseBody = body;
-    responseBody[0].answer = "";
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
+      .send(body)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[0].slug).toBe("email");
-    expect(responseEnd.body.wrongAnswers[0].yourAnswer).toBe("");
-    expect(responseEnd.body.wrongAnswers[0].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "email") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("email");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for bando question
@@ -180,9 +186,20 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[1].slug).toBe("bando");
-    expect(responseEnd.body.wrongAnswers[1].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[1].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "bando") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("bando");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for last-numbers-bando question
@@ -205,9 +222,22 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[2].slug).toBe("last-numbers-bando");
-    expect(responseEnd.body.wrongAnswers[2].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[2].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "last-numbers-bando") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe(
+      "last-numbers-bando"
+    );
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for month-vocals question
@@ -230,9 +260,20 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[3].slug).toBe("month-vocals");
-    expect(responseEnd.body.wrongAnswers[3].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[3].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "month-vocals") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("month-vocals");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for amount question
@@ -255,9 +296,20 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[4].slug).toBe("amount");
-    expect(responseEnd.body.wrongAnswers[4].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[4].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "amount") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("amount");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for axis question
@@ -280,9 +332,20 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[5].slug).toBe("axis");
-    expect(responseEnd.body.wrongAnswers[5].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[5].correctAnswer).toBe(correctAnswer);
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "axis") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("axis");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 
   //Should return correct answer for moment-date question
@@ -305,198 +368,152 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[6].slug).toBe("moment-date");
-    expect(responseEnd.body.wrongAnswers[6].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[6].correctAnswer).toBe(correctAnswer);
-  });
 
-  //Should return correct answer for first-characters question
-  it("Should return wrong answer for first-characters when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for first-characters question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "first-characters" })
-      .first();
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("first-characters");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for last-characters question
-  it("Should return wrong answer for last-characters when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for last-characters question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "last-characters" })
-      .first();
-    const responseBody = body;
-    responseBody[8] = { slug: "last-characters", answer: "a" };
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("last-characters");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for first-numbers question
-  it("Should return wrong answer for first-numbers when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for first-numbers question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "first-numbers" })
-      .first();
-    const responseBody = body;
-    responseBody[8] = { slug: "first-numbers", answer: "a" };
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("first-numbers");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for last-numbers question
-  it("Should return wrong answer for last-numbers when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for last-numbers question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "last-numbers" })
-      .first();
-    const responseBody = body;
-    responseBody[8] = { slug: "last-numbers", answer: "a" };
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("last-numbers");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for today question
-  it("Should return wrong answer for today when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for today question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "today" })
-      .first();
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[7].slug).toBe("today");
-    expect(responseEnd.body.wrongAnswers[7].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[7].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for tomorrow question
-  it("Should return wrong answer for tomorrow when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for tomorrow question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "tomorrow" })
-      .first();
-    const responseBody = body;
-    responseBody[8] = { slug: "tomorrow", answer: "a" };
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("tomorrow");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
-  });
-
-  //Should return correct answer for yesterday question
-  it("Should return wrong answer for yesterday when send wrong data", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    //get correct answer for yesterday question
-    const result = await clickDay.tables.CdAttemptsQuestions.do()
-      .select("correct_answer")
-      .where({ attempt_id: responseStart.body.id, type: "yesterday" })
-      .first();
-    const responseBody = body;
-    responseBody[8] = { slug: "yesterday", answer: "a" };
-    const correctAnswer = result?.correct_answer;
-    const responseEnd = await request(app)
-      .post(`/attempts/${responseStart.body.id}`)
-      .send(responseBody)
-      .set("authorization", "Bearer tester");
-    expect(responseEnd.body.success).toBe(false);
-    expect(responseEnd.body.wrongAnswers).toBeDefined();
-    expect(responseEnd.body.wrongAnswers[8].slug).toBe("yesterday");
-    expect(responseEnd.body.wrongAnswers[8].yourAnswer).toBe("a");
-    console.log(
-      "responseEnd.body.wrongAnswers[8].correctAnswer",
-      responseEnd.body.wrongAnswers[8].correctAnswer
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === "moment-date") {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe("moment-date");
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
     );
-    console.log("correctAnswer", correctAnswer);
-    expect(responseEnd.body.wrongAnswers[8].correctAnswer).toBe(correctAnswer);
+  });
+
+  //Should return correct answer for today/tomorrow/yesterday question
+  it("Should return correct answer for today/tomorrow/yesterday question", async () => {
+    // start attempt
+    const attemptStartRequest = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    // check what type of question was asked
+    const resultTypes = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("type")
+      .where({ attempt_id: attemptStartRequest.body.id });
+
+    // search if type is today/tomorrow/yesterday
+    let type = "";
+    resultTypes.forEach(({ type: resultType }) => {
+      if (
+        resultType === "today" ||
+        resultType === "tomorrow" ||
+        resultType === "yesterday"
+      )
+        type = resultType;
+    });
+
+    // replace today/tomorrow/yesterday question in body array with current type and wrong answer
+    const requestBody = body;
+    body.find((item, index) => {
+      if (item.slug === "today") {
+        requestBody[index] = { slug: type, answer: "a" };
+        return true;
+      }
+    });
+
+    // get correct answer for {type} question
+    const result = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("correct_answer")
+      .where({ attempt_id: attemptStartRequest.body.id, type })
+      .first();
+    const correctAnswer = result?.correct_answer;
+
+    // send answers and check correct answers
+    const responseEnd = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBody)
+      .set("authorization", "Bearer tester");
+
+    expect(responseEnd.body.success).toBe(false);
+    expect(responseEnd.body.wrongAnswers).toBeDefined();
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === type) {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe(type);
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
+  });
+
+  //Should return correct answer for first-characters/last-characters/first-numbers/last-numbers question
+  it("Should return correct answer for first-characters/last-characters/first-numbers/last-numbers question", async () => {
+    // start attempt
+    const attemptStartRequest = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    // check what type of question was asked
+    const resultTypes = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("type")
+      .where({ attempt_id: attemptStartRequest.body.id });
+
+    // search if type is first-characters/last-characters/first-numbers/last-numbers
+    let type = "";
+    resultTypes.forEach(({ type: resultType }) => {
+      if (
+        resultType === "first-characters" ||
+        resultType === "last-characters" ||
+        resultType === "first-numbers" ||
+        resultType === "last-numbers"
+      )
+        type = resultType;
+    });
+
+    // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
+    const requestBody = body;
+    body.find((item, index) => {
+      if (item.slug === "first-characters") {
+        requestBody[index] = { slug: type, answer: "a" };
+        return true;
+      }
+    });
+
+    // get correct answer for {type} question
+    const result = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("correct_answer")
+      .where({ attempt_id: attemptStartRequest.body.id, type })
+      .first();
+    const correctAnswer = result?.correct_answer;
+
+    // send answers and check correct answers
+    const responseEnd = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBody)
+      .set("authorization", "Bearer tester");
+
+    expect(responseEnd.body.success).toBe(false);
+    expect(responseEnd.body.wrongAnswers).toBeDefined();
+
+    // check if the wrongAnswers array contains the slug and yourAnswer
+    let index = 0;
+    responseEnd.body.wrongAnswers.find((item: { slug: string }, i: number) => {
+      if (item.slug === type) {
+        index = i;
+        return true;
+      }
+    });
+    expect(responseEnd.body.wrongAnswers[index].slug).toBe(type);
+    expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
+    expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
+      correctAnswer
+    );
   });
 });
