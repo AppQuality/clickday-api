@@ -2,18 +2,33 @@ import * as fs from "fs";
 import * as glob from "glob";
 
 function parseTestText(testText: string): string[] {
-  const lines = testText.split("\n").filter(Boolean);
-  const description = lines[0]
-    .replace('describe("', "")
-    .replace('", () => {', "");
-  const tests = lines.slice(1).map((line) =>
-    line
-      .replace('it("', "")
-      .replace(/", (async )?\(\) => {/, "")
-      .replace("\t", " ")
-      .replace(/\s+/g, " ")
-  );
-  return tests.map((test) => `${description} -${test}`);
+  const lines = testText.split("\n");
+  const res: { desc: string; test: string[] }[] = [];
+  let lastDescription = "";
+  for (const l of lines) {
+    if (l.includes("describe(")) {
+      const description = l.replace('describe("', "").replace('", () => {', "");
+      if (!res.find((r) => r.desc === description)) {
+        res.push({ desc: description, test: [] });
+        lastDescription = description;
+      }
+    } else if (l.includes("it(")) {
+      const test = l
+        .replace('it("', "")
+        .replace(/", (async )?\(\) => {/, "")
+        .replace("\t", " ")
+        .replace(/\s+/g, " ");
+      res.find((r) => r.desc === lastDescription)?.test.push(test);
+    }
+  }
+  const tests = res.flat().map((r) => {
+    return r.test.map((t) => `${r.desc} -${t}`);
+  });
+  const result: string[] = [];
+  for (const t of tests.flat()) {
+    result.push(t);
+  }
+  return result;
 }
 
 function getTests() {
@@ -32,5 +47,4 @@ function getTests() {
   }
   return results.join("\n");
 }
-
 console.log(getTests());
