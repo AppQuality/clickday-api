@@ -516,4 +516,31 @@ describe("POST /attempts/:id", () => {
       correctAnswer
     );
   });
+
+  //Should return success true if send all correct answers
+  it("Should return success true if send all correct answers", async () => {
+    // start attempt
+    const attemptStartRequest = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    const correctAnswers = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("type", "correct_answer")
+      .where({ attempt_id: attemptStartRequest.body.id });
+
+    const requestBody = correctAnswers.map(({ type, correct_answer }) => {
+      return { slug: type, answer: correct_answer };
+    });
+
+    const responseEnd = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBody)
+      .set("authorization", "Bearer tester");
+
+    expect(responseEnd.body.success).toBe(true);
+    expect(responseEnd.body.wrongAnswers).not.toBeDefined();
+  });
 });
