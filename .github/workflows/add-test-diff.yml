@@ -27,6 +27,9 @@ jobs:
         id: target-branch
         run: |
           TESTS=$(yarn -s test:ls 2>/dev/null)
+          TESTS="${TESTS//'%'/'%25'}"
+          TESTS="${TESTS//$'\n'/'%0A'}"
+          TESTS="${TESTS//$'\r'/'%0D'}"
           echo "tests_before=${TESTS}" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v2
@@ -42,6 +45,9 @@ jobs:
         id: current-branch
         run: |
           TESTS=$(yarn -s test:ls 2>/dev/null)
+          TESTS="${TESTS//'%'/'%25'}"
+          TESTS="${TESTS//$'\n'/'%0A'}"
+          TESTS="${TESTS//$'\r'/'%0D'}"
           echo "tests_after=${TESTS}" >> $GITHUB_OUTPUT
 
       - name: Get diff
@@ -53,6 +59,10 @@ jobs:
           if [ ! -z "$DIFF" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
+
+          DIFF="${DIFF//'%'/'%25'}"
+          DIFF="${DIFF//$'\n'/'%0A'}"
+          DIFF="${DIFF//$'\r'/'%0D'}"
           echo "diff=${DIFF}" >> $GITHUB_OUTPUT
 
   comment-pr:
