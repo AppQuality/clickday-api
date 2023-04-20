@@ -53,8 +53,18 @@ jobs:
       - name: Get diff
         id: test-diff
         run: |
-          echo "${{ steps.current-branch.outputs.tests_before }}" > origin.txt
-          echo "${{ steps.current-branch.outputs.tests_after }}" > branch.txt
+          OR="${{ steps.current-branch.outputs.tests_before }}"
+          BR="${{ steps.current-branch.outputs.tests_after }}"
+
+          OR="${OR//'%25'/'%'}"
+          OR="${OR//'%0A'/$'\n'}"
+          OR="${OR//'%0D'/$'\r'}"
+          BR="${BR//'%25'/'%'}"
+          BR="${BR//'%0A'/$'\n'}"
+          BR="${BR//'%0D'/$'\r'}"
+          echo "$OR" > origin.txt
+          echo "$BR" > branch.txt
+
           DIFF=$(diff origin.txt branch.txt)
           if [ ! -z "$DIFF" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
