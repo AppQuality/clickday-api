@@ -14,6 +14,7 @@ export default class BandoAmountQuestion extends DropdownQuestion<"amount"> {
       "9999€",
     ]);
   }
+
   protected minimumOptions(): number {
     return 6;
   }

@@ -13,7 +13,8 @@ export default class BandoAxisQuestion extends DropdownQuestion<"axis"> {
       "456",
     ]);
   }
+
   protected minimumOptions(): number {
-    return 4;
+    return 5;
   }
 }
