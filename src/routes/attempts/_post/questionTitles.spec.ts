@@ -7,7 +7,6 @@ describe("POST /attempts questions titles", () => {
     await clickDay.tables.CdAttempts.do().delete();
     await clickDay.tables.CdAttemptsQuestions.do().delete();
   });
-  //get all questions slugs
 
   const questionTypesWithAnswers = [
     "email",
