@@ -11,7 +11,10 @@ export default class DateQuestion extends TextQuestion<
   }
 
   protected getCorrect({ date }: { date: Date }) {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
   static getType() {
