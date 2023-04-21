@@ -24,10 +24,35 @@ export default class DropdownQuestion<T extends string> extends Question<
     return this.options;
   }
 
+  protected minimumOptions() {
+    return [...new Set(this.currentOptions)].length;
+  }
+
+  private optionsNumber() {
+    return Math.floor(
+      Math.random() *
+        ([...new Set(this.currentOptions)].length - this.minimumOptions() + 1) +
+        this.minimumOptions()
+    );
+  }
+
   public question() {
+    const options = [...new Set(this.currentOptions)];
+
+    let selected = options
+      .sort(() => 0.5 - Math.random())
+      .slice(0, this.optionsNumber());
+
+    if (
+      selected.find((option) => option === this.correctAnswer) === undefined
+    ) {
+      selected[selected.length - 1] = this.correctAnswer;
+      selected = selected.sort(() => 0.5 - Math.random());
+    }
+
     return {
       ...super.question(),
-      options: [...new Set(this.currentOptions)],
+      options: selected,
     };
   }
 }
