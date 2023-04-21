@@ -11,11 +11,7 @@ export default class DateQuestion extends TextQuestion<
   }
 
   protected getCorrect({ date }: { date: Date }) {
-    return date.toLocaleDateString("it-IT", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   }
 
   static getType() {
