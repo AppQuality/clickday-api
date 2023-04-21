@@ -23,4 +23,8 @@ export default class MonthVocalsQuestion extends DropdownQuestion<"month-vocals"
     const month = date.getMonth();
     return this.currentOptions[month];
   }
+
+  protected showAnswer(): boolean {
+    return false;
+  }
 }
