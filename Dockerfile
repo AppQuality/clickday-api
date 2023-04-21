@@ -2,6 +2,8 @@ FROM node:18-alpine3.16 AS node
 FROM alpine:3.16 as base
 
 RUN apk add nodejs yarn
+RUN apk add --no-cache icu-libs
+RUN apk add --no-cache icu-data-full
 COPY package.json ./
 COPY yarn.lock ./
 ARG NPM_TOKEN  
