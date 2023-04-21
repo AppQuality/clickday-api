@@ -3,14 +3,6 @@
 import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
-interface Attempt {
-  id: number;
-  tester_id: number;
-  agency_code: string;
-  start_time: string;
-  end_time: string | null;
-  errors: number | null;
-}
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-attempts-id"]["responses"]["200"]["content"]["application/json"];
   body: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["application/json"];
@@ -35,11 +27,49 @@ export default class Route extends UserRoute<{
     "last-numbers",
   ];
 
+  private _attempt:
+    | { id: number; end_time: string; start_time: string; errors: number }
+    | undefined;
+
   constructor(configuration: RouteClassConfiguration) {
     super(configuration);
     this.answers = this.getBody();
     const parameters = this.getParameters();
-    if (parameters.id) this.attempt_id = Number(parameters.id);
+    this.attempt_id = Number(parameters.id);
+  }
+
+  protected async init(): Promise<void> {
+    try {
+      this._attempt = await this.getAttempt();
+    } catch (e) {
+      const error = new OpenapiError("Attempt not found");
+      this.setError(404, error);
+      throw error;
+    }
+  }
+
+  private async getAttempt() {
+    const attempt = await clickDay.tables.CdAttempts.do()
+      .select()
+      .where({ id: this.attempt_id })
+      .first();
+    if (!attempt) throw new Error("Attempt not found");
+    return attempt;
+  }
+
+  get attempt() {
+    if (!this._attempt) throw new Error("Attempt not found");
+    return this._attempt;
+  }
+
+  set errors(errors: number) {
+    if (!this._attempt) throw new Error("Attempt not found");
+    this._attempt.errors = errors;
+  }
+
+  set endTime(endTime: string) {
+    if (!this._attempt) throw new Error("Attempt not found");
+    this._attempt.end_time = endTime;
   }
 
   protected async filter(): Promise<boolean> {
@@ -62,67 +92,35 @@ export default class Route extends UserRoute<{
       return false;
     }
 
-    if (!(await this.getAttempt())) {
-      this.setError(404, new OpenapiError("Attempt not found"));
-      return false;
-    }
-
     return true;
   }
 
-  protected async prepare() {
-    const attempt = await this.getresults();
-    if (!attempt) {
-      this.setError(404, new OpenapiError("Attempt not found"));
-      return;
-    }
-    this.setSuccess(200, attempt);
-  }
-
-  private async getAttempt() {
-    const attempt = await clickDay.tables.CdAttempts.do()
-      .select()
-      .where({ id: this.attempt_id })
-      .first();
-    return attempt ?? false;
-  }
-
   private async attemptIsCompleted() {
-    const attempt = await clickDay.tables.CdAttempts.do()
-      .select("id")
-      .where({ id: this.attempt_id })
-      .whereNotNull("end_time")
-      .first();
-    return attempt !== undefined;
+    return this.attempt.end_time !== null;
   }
 
-  private async getresults() {
-    const attempt = await this.getAttempt();
-    if (!attempt) return false;
+  protected async prepare() {
     const wrongAnswers = await this.getWrongAnswers();
-    const endTime = new Date();
-    await this.updateAttempt(wrongAnswers.length ?? 0, endTime, attempt);
+    const elapsedTime = this.updateTiming();
+    this.errors = wrongAnswers.length ?? 0;
 
-    const elapsedTime =
-      endTime.getTime() - new Date(attempt.start_time).getTime();
-    return {
+    await this.updateAttempt();
+
+    this.setSuccess(200, {
       elapsedTime: elapsedTime,
       success: wrongAnswers.length === 0,
       ...(wrongAnswers.length > 0 && { wrongAnswers }),
-    };
+    });
   }
 
   private async getWrongAnswers() {
     const correctAnswers = await this.getCorrectAnswers();
-    let wrongAnswers = this.answers
+    return this.answers
       .filter((a) => {
         const correctAnswer = correctAnswers.find(
           (c) => c.type === a.slug
         )?.correct_answer;
-        if (correctAnswer !== a.answer) {
-          return true;
-        }
-        return false;
+        return correctAnswer !== a.answer;
       })
       .map((a) => {
         return {
@@ -132,29 +130,6 @@ export default class Route extends UserRoute<{
             correctAnswers.find((c) => c.type === a.slug)?.correct_answer || "",
         };
       });
-    return wrongAnswers;
-  }
-
-  private async updateAttempt(errors: number, endTime: Date, attempt: Attempt) {
-    await clickDay.tables.CdAttempts.do()
-      .update({
-        end_time:
-          endTime.getFullYear() +
-          "-" +
-          (endTime.getMonth() + 1) +
-          "-" +
-          endTime.getDate() +
-          " " +
-          endTime.getHours() +
-          ":" +
-          endTime.getMinutes() +
-          ":" +
-          endTime.getSeconds() +
-          "." +
-          endTime.getMilliseconds(),
-        errors,
-      })
-      .where({ id: attempt.id });
   }
 
   private async getCorrectAnswers() {
@@ -162,5 +137,23 @@ export default class Route extends UserRoute<{
       .select("type", "correct_answer")
       .where({ attempt_id: this.attempt_id });
     return correctAnswers;
+  }
+
+  private updateTiming() {
+    const endTime = new Date().toISOString().replace("T", " ").split(".")[0];
+    this.endTime = endTime;
+    const elapsedTime =
+      new Date(endTime).getTime() - new Date(this.attempt.start_time).getTime();
+
+    return elapsedTime;
+  }
+
+  private async updateAttempt() {
+    await clickDay.tables.CdAttempts.do()
+      .update({
+        errors: this.attempt.errors,
+        end_time: this.attempt.end_time,
+      })
+      .where({ id: this.attempt_id });
   }
 }

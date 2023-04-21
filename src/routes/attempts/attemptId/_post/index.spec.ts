@@ -21,8 +21,14 @@ describe("POST /attempts/:id", () => {
     await clickDay.tables.CdAttemptsQuestions.do().delete();
   });
   it("Should answer 400 if request body length is not 9", async () => {
+    const responseStart = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
     const response = await request(app)
-      .post("/attempts/1")
+      .post("/attempts/" + responseStart.body.id)
       .set("authorization", "Bearer tester")
       .send([{ slug: "email", answer: "gino.porfilio@tryber.me" }]);
     expect(response.status).toBe(400);
@@ -97,20 +103,18 @@ describe("POST /attempts/:id", () => {
         code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
       })
       .set("authorization", "Bearer tester");
+    const startTime = new Date().getTime();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
       .send(body)
       .set("authorization", "Bearer tester");
+    const endTime = new Date().getTime();
     expect(responseEnd.body.elapsedTime).toBeGreaterThan(0);
-    const res = await clickDay.tables.CdAttempts.do()
-      .select("end_time", "start_time")
-      .where({ id: responseStart.body.id })
-      .first();
-    if (res && res.end_time && res.start_time) {
-      const checkElapsedTime =
-        new Date(res?.end_time).getTime() - new Date(res?.start_time).getTime();
-      expect(checkElapsedTime).toEqual(responseEnd.body.elapsedTime);
-    }
+    expect(responseEnd.body.elapsedTime / 1000).toBeCloseTo(
+      (endTime - startTime) / 1000,
+      1
+    );
   });
 
   it("Should update end_date for the attempt", async () => {
