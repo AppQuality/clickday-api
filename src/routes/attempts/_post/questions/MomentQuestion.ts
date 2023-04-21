@@ -10,8 +10,10 @@ export default class MomentQuestion extends DropdownQuestion<"moment-date"> {
       "Momento 5 : 26/10/2021",
       "Momento 6 : 12/12/2022",
       "Momento 7 : 13/12/2018",
-      "Momento 8 : 26/09/2019",
-      "Momento 9 : 26/10/2021",
     ]);
+  }
+
+  protected minimumOptions(): number {
+    return 4;
   }
 }

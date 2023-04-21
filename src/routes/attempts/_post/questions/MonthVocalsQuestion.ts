@@ -27,4 +27,8 @@ export default class MonthVocalsQuestion extends DropdownQuestion<"month-vocals"
   protected showAnswer(): boolean {
     return false;
   }
+
+  protected minimumOptions(): number {
+    return 6;
+  }
 }

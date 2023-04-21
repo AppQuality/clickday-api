@@ -20,4 +20,7 @@ export default class BandoNumbersQuestion extends DropdownQuestion<"last-numbers
     }
     return correctOption;
   }
+  protected minimumOptions(): number {
+    return 3;
+  }
 }
