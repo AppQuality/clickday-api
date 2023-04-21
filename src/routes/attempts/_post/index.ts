@@ -42,6 +42,7 @@ export default class Route extends UserRoute<{
     const vocalsOfMonth = await this.generateVocalsOfMonthQuestion(attempt_id);
     const { question: bando, correct: correctBando } =
       await this.generateBandoQuestion(attempt_id);
+
     const lastBandoNumbers = await this.generateLastBandoNumbersQuestion(
       attempt_id,
       correctBando
