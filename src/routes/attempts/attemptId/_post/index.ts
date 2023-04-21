@@ -1,5 +1,6 @@
 /** OPENAPI-CLASS: post-attempts-id */
 
+import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
 interface Attempt {
@@ -43,10 +44,7 @@ export default class Route extends UserRoute<{
 
   protected async filter(): Promise<boolean> {
     if (!this.answers || !this.answers.length) {
-      this.setError(400, {
-        code: 400,
-        message: "Missing answers",
-      } as OpenapiError);
+      this.setError(400, new OpenapiError("Missing answers"));
       return false;
     }
     if (
@@ -55,26 +53,17 @@ export default class Route extends UserRoute<{
       !this.answers.every((a) => typeof a.slug !== undefined) ||
       !this.answers.every((a) => this.allowedSlugs.includes(a.slug))
     ) {
-      this.setError(400, {
-        code: 400,
-        message: "Invalid answers",
-      } as OpenapiError);
+      this.setError(400, new OpenapiError("Invalid answers"));
       return false;
     }
 
     if (await this.attemptIsCompleted()) {
-      this.setError(403, {
-        code: 403,
-        message: "Attempt already finished",
-      } as OpenapiError);
+      this.setError(403, new OpenapiError("Attempt already finished"));
       return false;
     }
 
     if (!(await this.getAttempt())) {
-      this.setError(404, {
-        code: 404,
-        message: "Attempt not found",
-      } as OpenapiError);
+      this.setError(404, new OpenapiError("Attempt not found"));
       return false;
     }
 
@@ -84,10 +73,7 @@ export default class Route extends UserRoute<{
   protected async prepare() {
     const attempt = await this.getresults();
     if (!attempt) {
-      this.setError(404, {
-        code: 404,
-        message: "Attempt not found",
-      } as OpenapiError);
+      this.setError(404, new OpenapiError("Attempt not found"));
       return;
     }
     this.setSuccess(200, attempt);
