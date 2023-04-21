@@ -16,7 +16,8 @@ export default class Route extends UserRoute<{
       .select("id", "agency_code", "start_time", "end_time", "errors")
       .where({
         tester_id: this.getTesterId(),
-      });
+      })
+      .whereNotNull("end_time");
     return attempts.map((attempt) => ({
       id: attempt.id,
       date: this.formatStartDate(attempt.start_time),

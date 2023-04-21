@@ -67,7 +67,7 @@ describe("GET /attempts", () => {
       .get("/attempts")
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(3);
+    expect(response.body.length).toBe(2);
     const today = new Date();
     const todayString = `${today.getFullYear()}-${
       today.getMonth() + 1
@@ -88,12 +88,42 @@ describe("GET /attempts", () => {
         code: "+asd123",
         errors: 4,
       },
+    ]);
+  });
+  it("Should return just attempts with end_date", async () => {
+    const attempts = await clickDay.tables.CdAttempts.do()
+      .select()
+      .where({ tester_id: 1 });
+    const comletedAttempts = attempts.filter(
+      (attempt) => attempt.end_time !== null
+    );
+
+    const response = await request(app)
+      .get("/attempts")
+      .set("authorization", "Bearer tester");
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(comletedAttempts.length);
+    const today = new Date();
+    const todayString = `${today.getFullYear()}-${
+      today.getMonth() + 1
+    }-${today.getDate()}`;
+
+    expect(response.body.length).not.toEqual(attempts.length);
+    expect(response.body).toEqual([
       {
-        id: 3,
+        id: 1,
         date: todayString,
-        time: "0",
+        time: "10",
         code: "+asd123",
         errors: 0,
+      },
+      {
+        id: 2,
+        date: todayString,
+        time: "10",
+        code: "+asd123",
+        errors: 4,
       },
     ]);
   });
