@@ -5,17 +5,16 @@ export default class DateQuestion extends TextQuestion<
 > {
   constructor() {
     const { type, itString, date } = DateQuestion.getType();
-    super(type, `Scrivi la data di ${itString} in formato gg/mm/aaaa`, {
+    super(type, `Inserisci la data di ${itString} nel formato gg/mm/aaaa`, {
       date,
     });
   }
 
   protected getCorrect({ date }: { date: Date }) {
-    return date.toLocaleDateString("it-IT", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
   static getType() {

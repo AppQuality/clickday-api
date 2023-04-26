@@ -11,4 +11,8 @@ export default class BandoQuestion extends DropdownQuestion<"bando"> {
       "Bando 2023",
     ]);
   }
+
+  protected minimumOptions(): number {
+    return 4;
+  }
 }

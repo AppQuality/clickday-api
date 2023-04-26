@@ -11,6 +11,11 @@ export default class EmailQuestion extends DropdownQuestion<"email"> {
       "ferdinanda.barese@tryber.me",
       "nicoletta.pinto@tryber.me",
       "biagio.bruno@tryber.me",
+      "delia.demetrio@tryber.me",
     ]);
+  }
+
+  protected minimumOptions(): number {
+    return 6;
   }
 }
