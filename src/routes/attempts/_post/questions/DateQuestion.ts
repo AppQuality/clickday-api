@@ -5,7 +5,7 @@ export default class DateQuestion extends TextQuestion<
 > {
   constructor() {
     const { type, itString, date } = DateQuestion.getType();
-    super(type, `Scrivi la data di ${itString} in formato gg/mm/aaaa`, {
+    super(type, `Inserisci la data di ${itString} nel formato gg/mm/aaaa`, {
       date,
     });
   }
