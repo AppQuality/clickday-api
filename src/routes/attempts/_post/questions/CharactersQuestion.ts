@@ -56,7 +56,7 @@ export default class CharacterQuestion extends TextQuestion<
   static lastNumbers(code: string) {
     return {
       type: "last-numbers" as const,
-      title: `Inserisci gli primi 5 numeri del codice alfanumerico`,
+      title: `Inserisci gli primi 5 numeri del codice alfanumerico (${code})`,
       answer: code.replace(/\D/g, "").slice(-5),
     };
   }
