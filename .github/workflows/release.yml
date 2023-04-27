@@ -15,7 +15,6 @@ env:
   DEPLOY_PREPROD_KEY: tryber-cd-api-preproduction-pipeline/source.zip
   PREPROD_ASG_NAME: tryber-asg-tryber-cd-api-preproduction
   PREPROD_PIPELINE: tryber-cd-api-preproduction-pipeline-pipeline
-  
 
 jobs:
   push-to-ecr:
@@ -51,7 +50,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-          tags: ${{ steps.extract_tag.outputs.tag }}
+          IMAGE_TAG: ${{ steps.extract_tag.outputs.tag }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           DOCKER_BUILDKIT=1 docker build  --build-arg NPM_TOKEN=$NPM_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -113,7 +112,6 @@ jobs:
         with:
           pipeline: ${{ steps.extract_tag.outputs.PREPROD_PIPELINE }}
           wait: true
-          
 
   prepare-release-for-prod:
     name: Prepare release to Prod
@@ -194,7 +192,6 @@ jobs:
           body: "[![](https://img.shields.io/badge/AWS-Redeploy-blueviolet)](${{ steps.codedeploy.outputs.codedeploy_url }})"
           isAppendBody: true
 
-
   disable-preprod-on-release:
     name: Disable PreProd
     needs: [prepare-release-for-prod, release-to-preprod]
@@ -215,4 +212,3 @@ jobs:
           ASG_NAME: ${{ steps.extract_asg.outputs.PREPROD_ASG_NAME }}
           DESIRED_INSTANCES: ${{needs.release-to-preprod.outputs.original_preprod_desired }}
           MAX_INSTANCES: ${{needs.release-to-preprod.outputs.original_preprod_max }}
-        
