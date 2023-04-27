@@ -17,6 +17,21 @@ describe("POST /attempts questions titles", () => {
     "moment-date",
   ];
 
+  const italianMonths = [
+    "Gennaio",
+    "Febbraio",
+    "Marzo",
+    "Aprile",
+    "Maggio",
+    "Giugno",
+    "Luglio",
+    "Agosto",
+    "Settembre",
+    "Ottobre",
+    "Novembre",
+    "Dicembre",
+  ];
+
   test.each(questionTypesWithAnswers)(
     "Should return correct answer in title for %s question",
     async (questionType) => {
@@ -154,6 +169,40 @@ describe("POST /attempts questions titles", () => {
           title: expect.not.stringContaining(question.correct_answer),
         }),
       ])
+    );
+  });
+
+  // test.each(italianMonths)(
+  //   "Should contain %s in question month vocals  when month is %s",
+  //   async (currentMonth) => {
+  //     const response = await request(app)
+  //       .post("/attempts")
+  //       .send({
+  //         code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+  //       })
+  //       .set("authorization", "Bearer tester");
+
+  //     const monthVocalQuestion = response.body.questions.find(
+  //       (question: { slug: string }) => question.slug === 'month-vocals');
+  //       console.log(monthVocalQuestion);
+  //   }
+  // );
+
+  it("Should contain correct italian month in title for month-vocals question", async () => {
+    const currentMonth = new Date().getMonth();
+    const italianMonth = italianMonths[currentMonth];
+    const response = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    const monthVocalQuestion = response.body.questions?.find(
+      (question: { slug: string }) => question.slug === "month-vocals"
+    );
+    expect(monthVocalQuestion.title).toEqual(
+      expect.stringContaining(italianMonth)
     );
   });
 });

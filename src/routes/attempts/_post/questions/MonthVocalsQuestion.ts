@@ -2,21 +2,26 @@ import DropdownQuestion from "./DropdownQuestion";
 
 export default class MonthVocalsQuestion extends DropdownQuestion<"month-vocals"> {
   constructor() {
-    /* TODO: inserire il mese es.(Aprile) nella domanda */
-    super("month-vocals", "Seleziona le vocali del mese della data odierna", [
-      "eaio",
-      "eaio",
-      "ao",
-      "aie",
-      "aio",
-      "iuo",
-      "uio",
-      "ao",
-      "e",
-      "oe",
-      "oe",
-      "ie",
-    ]);
+    const month = new Date().toLocaleString("it-IT", { month: "long" });
+    const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+    super(
+      "month-vocals",
+      `Seleziona le vocali del mese della data odierna (${capitalizedMonth})`,
+      [
+        "eaio",
+        "eaio",
+        "ao",
+        "aie",
+        "aio",
+        "iuo",
+        "uio",
+        "ao",
+        "e",
+        "oe",
+        "oe",
+        "ie",
+      ]
+    );
   }
 
   protected getCorrect() {
