@@ -74,6 +74,7 @@ export default class Route extends UserRoute<{
     await clickDay.tables.CdAttempts.do().insert({
       agency_code: this.code,
       tester_id: this.getTesterId(),
+      start_time: new Date().toISOString().replace("T", " ").split(".")[0],
     });
 
     const attempt = await clickDay.tables.CdAttempts.do()

@@ -97,6 +97,7 @@ describe("POST /attempts/:id", () => {
   });
 
   it("Should return the elapsedTime", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2021-04-19 09:16:34"));
     const responseStart = await request(app)
       .post("/attempts")
       .send({
@@ -104,17 +105,17 @@ describe("POST /attempts/:id", () => {
       })
       .set("authorization", "Bearer tester");
     const startTime = new Date().getTime();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    jest.useFakeTimers().setSystemTime(new Date("2021-04-19 09:16:35"));
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
       .send(body)
       .set("authorization", "Bearer tester");
     const endTime = new Date().getTime();
     expect(responseEnd.body.elapsedTime).toBeGreaterThan(0);
-    // expect(responseEnd.body.elapsedTime / 1000).toBeCloseTo(
-    //   (endTime - startTime) / 1000,
-    //   1
-    // );
+    expect(responseEnd.body.elapsedTime / 2000).toBeCloseTo(
+      (endTime - startTime) / 2000,
+      1
+    );
   });
 
   it("Should update end_date for the attempt", async () => {
