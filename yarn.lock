@@ -38,15 +38,6 @@
     knex "^2.4.2"
     mysql "^2.18.1"
 
-"@appquality/unguess-database@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@appquality/unguess-database/-/unguess-database-0.6.1.tgz#01be5d515b6f4e5c326602524ef11b824646d98a"
-  integrity sha512-RWjmjneba2A1LAjA1+ZH4ctbuEmaLDNaPuSBDfvJLIm05iR8iav2iJ4XvFuXBij2jj/KcJzZw43rfKR1KPh+qA==
-  dependencies:
-    better-sqlite3 "^8.1.0"
-    knex "^2.4.2"
-    mysql "^2.18.1"
-
 "@appquality/wp-auth@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@appquality/wp-auth/-/wp-auth-1.0.7.tgz#7034ba93b741b51983377013ea1e04700b94995c"
