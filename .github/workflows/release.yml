@@ -7,10 +7,15 @@ on:
 
 env:
   ECR_REPOSITORY: clickday-api
-  DEPLOY_PROD_BUCKET: openapi-base-project-source
-  DEPLOY_PROD_KEY: openapi-base-project-pipeline/source.zip
-  ASG_NAME: openapi-base-project-production
-  PIPELINE: openapi-base-project-pipeline
+  DEPLOY_PROD_BUCKET: tryber-production-source
+  DEPLOY_PROD_KEY: tryber-cd-api-production-pipeline/source.zip
+  ASG_NAME: tryber-asg-tryber-cd-api-production
+  PIPELINE: tryber-cd-api-production-pipeline-pipeline
+  DEPLOY_PREPROD_BUCKET: tryber-preproduction-source
+  DEPLOY_PREPROD_KEY: tryber-cd-api-preproduction-pipeline/source.zip
+  PREPROD_ASG_NAME: tryber-asg-tryber-cd-api-preproduction
+  PREPROD_PIPELINE: tryber-cd-api-preproduction-pipeline-pipeline
+  
 
 jobs:
   push-to-ecr:
@@ -52,8 +57,66 @@ jobs:
           DOCKER_BUILDKIT=1 docker build  --build-arg NPM_TOKEN=$NPM_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-  release-to-prod:
-    name: Release to production
+  release-to-preprod:
+    name: Release to PreProd
+    needs: push-to-ecr
+    runs-on: ubuntu-latest
+    environment: preproduction
+    outputs:
+      original_preprod_desired: ${{ steps.update-asg.outputs.original_desired }}
+      original_preprod_max: ${{ steps.update-asg.outputs.original_max }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get tag name
+        shell: bash
+        run: |
+          TAG=${GITHUB_REF##*/}
+          echo "##[set-output name=tag;]$TAG"
+          echo "##[set-output name=ECR_REPOSITORY;]$ECR_REPOSITORY"
+          echo "##[set-output name=DEPLOY_PREPROD_BUCKET;]$DEPLOY_PREPROD_BUCKET"
+          echo "##[set-output name=DEPLOY_PREPROD_KEY;]$DEPLOY_PREPROD_KEY"
+          echo "##[set-output name=PREPROD_ASG_NAME;]$PREPROD_ASG_NAME"
+          echo "##[set-output name=PREPROD_PIPELINE;]$PREPROD_PIPELINE"
+        id: extract_tag
+      - name: "Generate dist zip"
+        run: |
+          cd deployment
+          echo -n "${ECR_REPOSITORY}:${{steps.extract_tag.outputs.tag}}" > docker-image.txt
+          zip dist.zip *
+      - uses: zdurham/s3-upload-github-action@master
+        env:
+          S3_BUCKET: ${{ steps.extract_tag.outputs.DEPLOY_PREPROD_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "eu-west-1"
+          FILE: ./deployment/dist.zip
+          S3_KEY: ${{ steps.extract_tag.outputs.DEPLOY_PREPROD_KEY }}
+      - name: configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: Update asg capacity to 1
+        uses: AppQuality/update-desired-asg-instances@v1.0.0
+        id: update-asg
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "eu-west-1"
+          ASG_NAME: ${{ steps.extract_tag.outputs.PREPROD_ASG_NAME }}
+          DESIRED_INSTANCES: 1
+          MAX_INSTANCES: 1
+      - name: Start CodePipeline
+        uses: moia-oss/aws-codepipeline-trigger@v1
+        with:
+          pipeline: ${{ steps.extract_tag.outputs.PREPROD_PIPELINE }}
+          wait: true
+          
+
+  prepare-release-for-prod:
+    name: Prepare release to Prod
     needs: push-to-ecr
     runs-on: ubuntu-latest
     environment: production
@@ -130,3 +193,26 @@ jobs:
         with:
           body: "[![](https://img.shields.io/badge/AWS-Redeploy-blueviolet)](${{ steps.codedeploy.outputs.codedeploy_url }})"
           isAppendBody: true
+
+
+  disable-preprod-on-release:
+    name: Disable PreProd
+    needs: [prepare-release-for-prod, release-to-preprod]
+    runs-on: ubuntu-latest
+    environment: preproduction
+    steps:
+      - name: Get asg name
+        shell: bash
+        run: |
+          echo "##[set-output name=PREPROD_ASG_NAME;]$PREPROD_ASG_NAME"
+        id: extract_asg
+      - name: Restore asg capacity
+        uses: AppQuality/update-desired-asg-instances@v1.0.0
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "eu-west-1"
+          ASG_NAME: ${{ steps.extract_asg.outputs.PREPROD_ASG_NAME }}
+          DESIRED_INSTANCES: ${{needs.release-to-preprod.outputs.original_preprod_desired }}
+          MAX_INSTANCES: ${{needs.release-to-preprod.outputs.original_preprod_max }}
+        
