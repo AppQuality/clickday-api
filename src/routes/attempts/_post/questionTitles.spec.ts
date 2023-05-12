@@ -85,7 +85,7 @@ describe("POST /attempts questions titles", () => {
     );
   });
 
-  it("Should not contain correct answer in title for first/last - character/numbers question", async () => {
+  it("Should contain correct answer in title for first/last - character/numbers question", async () => {
     const response = await request(app)
       .post("/attempts")
       .send({
@@ -114,14 +114,44 @@ describe("POST /attempts questions titles", () => {
         }),
       ])
     );
-    expect(response.body.questions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          slug: questionType,
-          title: expect.not.stringContaining(question.correct_answer),
-        }),
-      ])
-    );
+    const currentQuestion = response.body.questions.filter(
+      (q: { slug: string }) => q.slug === questionType
+    )[0];
+    switch (questionType) {
+      case "first-characters":
+        const firstCharactersTitle = currentQuestion.title
+          .split("(")[1]
+          .slice(0, 5);
+        expect(firstCharactersTitle).toEqual(question.correct_answer);
+        break;
+
+      case "last-characters":
+        const lastCharactersTitle = currentQuestion.title
+          .split("(")[1]
+          .split(")")[0]
+          .slice(-5);
+        expect(lastCharactersTitle).toEqual(question.correct_answer);
+        break;
+
+      case "first-numbers":
+        const firstNumbersTitle = currentQuestion.title
+          .split("(")[1]
+          .replace(/[^0-9]/g, "")
+          .slice(0, 5);
+        expect(firstNumbersTitle).toEqual(question.correct_answer);
+        break;
+
+      case "last-numbers":
+        const lastNumbersTitle = currentQuestion.title
+          .split("(")[1]
+          .split(")")[0]
+          .replace(/[^0-9]/g, "")
+          .slice(-5);
+        expect(lastNumbersTitle).toEqual(question.correct_answer);
+        break;
+      default:
+        throw new Error("No question found for first/last - character/numbers");
+    }
   });
 
   it("Should not contain correct answer in title for month-vocals question", async () => {
