@@ -55,12 +55,12 @@ describe("POST /attempts/:id", () => {
     expect(response.status).toBe(403);
   });
 
-  it("Should return 403 if the attempt is already completed", async () => {
+  it("Should return 200 if the attempt is already completed", async () => {
     const id = await clickDay.tables.CdAttempts.do().insert({
       agency_code: "+31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
       start_time: "2023-04-19 09:16:34",
       end_time: "2023-04-19 09:17:34",
-      errors: 0,
+      errors: 1,
       tester_id: 1,
     });
     const response = await request(app)
@@ -68,7 +68,7 @@ describe("POST /attempts/:id", () => {
       .send(body)
       .set("authorization", "Bearer tester");
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(200);
   });
 
   it("Should answer 404 if attempId does not exist", async () => {

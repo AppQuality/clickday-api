@@ -28,7 +28,13 @@ export default class Route extends UserRoute<{
   ];
 
   private _attempt:
-    | { id: number; end_time: string; start_time: string; errors: number }
+    | {
+        id: number;
+        end_time: string;
+        start_time: string;
+        errors: number;
+        submissions: number;
+      }
     | undefined;
 
   constructor(configuration: RouteClassConfiguration) {
@@ -87,21 +93,13 @@ export default class Route extends UserRoute<{
       return false;
     }
 
-    if (await this.attemptIsCompleted()) {
-      this.setError(403, new OpenapiError("Attempt already finished"));
-      return false;
-    }
-
     return true;
-  }
-
-  private async attemptIsCompleted() {
-    return this.attempt.end_time !== null;
   }
 
   protected async prepare() {
     const wrongAnswers = await this.getWrongAnswers();
     const elapsedTime = this.updateTiming();
+    this.updateSubmissions();
     this.errors = wrongAnswers.length ?? 0;
 
     await this.updateAttempt();
@@ -148,11 +146,16 @@ export default class Route extends UserRoute<{
     return elapsedTime;
   }
 
+  private updateSubmissions() {
+    ++this.attempt.submissions;
+  }
+
   private async updateAttempt() {
     await clickDay.tables.CdAttempts.do()
       .update({
         errors: this.attempt.errors,
         end_time: this.attempt.end_time,
+        submissions: this.attempt.submissions,
       })
       .where({ id: this.attempt_id });
   }
