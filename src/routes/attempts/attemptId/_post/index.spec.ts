@@ -608,15 +608,19 @@ describe("POST /attempts/:id", () => {
       .select("type", "correct_answer")
       .where({ attempt_id: attemptStartRequest.body.id });
 
-    const requestBody = correctAnswers.map(({ type, correct_answer }) => {
-      return { slug: type, answer: correct_answer };
-    });
+    const requestBodyWithError = correctAnswers.map(
+      ({ type, correct_answer }) => {
+        return { slug: type, answer: correct_answer };
+      }
+    );
+    requestBodyWithError[0].answer = "wrong answer";
 
     // firstSubmission
-    await request(app)
+    const firstSubmission = await request(app)
       .post(`/attempts/${attemptStartRequest.body.id}`)
-      .send(requestBody)
+      .send(requestBodyWithError)
       .set("authorization", "Bearer tester");
+    expect(firstSubmission.body.success).toBe(false);
 
     const res = await clickDay.tables.CdAttempts.do()
       .select("submissions")
@@ -625,11 +629,18 @@ describe("POST /attempts/:id", () => {
     expect(res?.submissions).toBeGreaterThan(0);
     expect(res?.submissions).toBe(1);
 
+    const requestBodyCorrect = correctAnswers.map(
+      ({ type, correct_answer }) => {
+        return { slug: type, answer: correct_answer };
+      }
+    );
+
     // secondSubmission
-    await request(app)
+    const secondSubmission = await request(app)
       .post(`/attempts/${attemptStartRequest.body.id}`)
-      .send(requestBody)
+      .send(requestBodyCorrect)
       .set("authorization", "Bearer tester");
+    expect(secondSubmission.body.success).toBe(true);
 
     const res2 = await clickDay.tables.CdAttempts.do()
       .select("submissions")
