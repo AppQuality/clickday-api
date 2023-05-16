@@ -481,7 +481,7 @@ describe("POST /attempts/:id", () => {
       )
         type = resultType;
     });
-
+    console.log(type);
     // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
     const requestBody = body;
     body.find((item, index) => {
@@ -515,6 +515,7 @@ describe("POST /attempts/:id", () => {
         return true;
       }
     });
+
     expect(responseEnd.body.wrongAnswers[index].slug).toBe(type);
     expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
     expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
