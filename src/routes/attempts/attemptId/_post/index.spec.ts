@@ -481,7 +481,6 @@ describe("POST /attempts/:id", () => {
       )
         type = resultType;
     });
-    console.log(type);
     // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
     const requestBody = body;
     body.find((item, index) => {
