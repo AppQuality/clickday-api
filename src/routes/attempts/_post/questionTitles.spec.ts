@@ -85,7 +85,7 @@ describe("POST /attempts questions titles", () => {
     );
   });
 
-  it("Should not contain correct answer in title for first/last - character/numbers question", async () => {
+  it("Should contain correct answer in title for first/last - character/numbers question", async () => {
     const response = await request(app)
       .post("/attempts")
       .send({
@@ -114,11 +114,14 @@ describe("POST /attempts questions titles", () => {
         }),
       ])
     );
-    expect(response.body.questions).toEqual(
+    const responseQuestion = response.body.questions.filter(
+      (q: { title: string; slug: string }) => q.slug == questionType
+    );
+    expect(responseQuestion).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           slug: questionType,
-          title: expect.not.stringContaining(question.correct_answer),
+          title: expect.stringContaining(question.correct_answer),
         }),
       ])
     );

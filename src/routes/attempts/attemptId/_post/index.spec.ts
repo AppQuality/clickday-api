@@ -55,12 +55,12 @@ describe("POST /attempts/:id", () => {
     expect(response.status).toBe(403);
   });
 
-  it("Should return 403 if the attempt is already completed", async () => {
+  it("Should return 200 if the attempt is already completed", async () => {
     const id = await clickDay.tables.CdAttempts.do().insert({
       agency_code: "+31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
       start_time: "2023-04-19 09:16:34",
       end_time: "2023-04-19 09:17:34",
-      errors: 0,
+      errors: 1,
       tester_id: 1,
     });
     const response = await request(app)
@@ -68,7 +68,7 @@ describe("POST /attempts/:id", () => {
       .send(body)
       .set("authorization", "Bearer tester");
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(200);
   });
 
   it("Should answer 404 if attempId does not exist", async () => {
@@ -481,7 +481,6 @@ describe("POST /attempts/:id", () => {
       )
         type = resultType;
     });
-
     // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
     const requestBody = body;
     body.find((item, index) => {
@@ -515,6 +514,7 @@ describe("POST /attempts/:id", () => {
         return true;
       }
     });
+
     expect(responseEnd.body.wrongAnswers[index].slug).toBe(type);
     expect(responseEnd.body.wrongAnswers[index].yourAnswer).toBe("a");
     expect(responseEnd.body.wrongAnswers[index].correctAnswer).toBe(
@@ -594,5 +594,58 @@ describe("POST /attempts/:id", () => {
       .first();
 
     expect(result?.errors).toBe(responseEnd.body.wrongAnswers.length);
+  });
+
+  it("Should increase submissions for the attempt", async () => {
+    const attemptStartRequest = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+
+    const correctAnswers = await clickDay.tables.CdAttemptsQuestions.do()
+      .select("type", "correct_answer")
+      .where({ attempt_id: attemptStartRequest.body.id });
+
+    const requestBodyWithError = correctAnswers.map(
+      ({ type, correct_answer }) => {
+        return { slug: type, answer: correct_answer };
+      }
+    );
+    requestBodyWithError[0].answer = "wrong answer";
+
+    // firstSubmission
+    const firstSubmission = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBodyWithError)
+      .set("authorization", "Bearer tester");
+    expect(firstSubmission.body.success).toBe(false);
+
+    const res = await clickDay.tables.CdAttempts.do()
+      .select("submissions")
+      .where({ id: attemptStartRequest.body.id })
+      .first();
+    expect(res?.submissions).toBeGreaterThan(0);
+    expect(res?.submissions).toBe(1);
+
+    const requestBodyCorrect = correctAnswers.map(
+      ({ type, correct_answer }) => {
+        return { slug: type, answer: correct_answer };
+      }
+    );
+
+    // secondSubmission
+    const secondSubmission = await request(app)
+      .post(`/attempts/${attemptStartRequest.body.id}`)
+      .send(requestBodyCorrect)
+      .set("authorization", "Bearer tester");
+    expect(secondSubmission.body.success).toBe(true);
+
+    const res2 = await clickDay.tables.CdAttempts.do()
+      .select("submissions")
+      .where({ id: attemptStartRequest.body.id })
+      .first();
+    expect(res2?.submissions).toBe(2);
   });
 });

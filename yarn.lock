@@ -20,10 +20,10 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
-"@appquality/clickday-database@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@appquality/clickday-database/-/clickday-database-0.8.0.tgz#617acc33286629661f14a7fdc12de0637e0af314"
-  integrity sha512-0ItIDgyQmKaiXmlBjsVDXE1jcGncEhWE7Hq6nJN7SIXs71Ib0LL/ywvNX+UNH4XIvWOitKVilJdmB2+ceMLpJg==
+"@appquality/clickday-database@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@appquality/clickday-database/-/clickday-database-0.9.0.tgz#d3fb14e574a3d45f5747590d35b7709368c55fd8"
+  integrity sha512-P6b1fHRei1n33b0CvPYA07QyuHpGe7sOYK79jAXMTaNPixszGw/85idAjrlFnoon0M6+/DV9zOgZevybLkfoYw==
   dependencies:
     better-sqlite3 "^8.1.0"
     knex "^2.4.2"

@@ -251,4 +251,17 @@ describe("POST /attempts", () => {
       }),
     ]);
   });
+
+  it("Should set submissions to 0 on attempt creation", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("authorization", "Bearer tester");
+    const res = await clickDay.tables.CdAttempts.do()
+      .select("submissions")
+      .where({ id: response.body.id })
+      .first();
+    expect(response.status).toBe(200);
+    expect(res?.submissions).toBe(0);
+  });
 });

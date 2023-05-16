@@ -32,7 +32,7 @@ export default class CharacterQuestion extends TextQuestion<
   static firstCharacters(code: string) {
     return {
       type: "first-characters" as const,
-      title: `Inserisci i primi 5 caratteri del codice alfanumerico (${code})`,
+      title: `Inserisci i primi 5 caratteri del codice alfanumerico`,
       answer: code.slice(0, 5),
     };
   }
@@ -40,7 +40,7 @@ export default class CharacterQuestion extends TextQuestion<
   static lastCharacters(code: string) {
     return {
       type: "last-characters" as const,
-      title: `Inserisci gli ultimi 5 caratteri del codice alfanumerico (${code})`,
+      title: `Inserisci gli ultimi 5 caratteri del codice alfanumerico`,
       answer: code.slice(-5),
     };
   }
@@ -48,7 +48,7 @@ export default class CharacterQuestion extends TextQuestion<
   static firstNumbers(code: string) {
     return {
       type: "first-numbers" as const,
-      title: `Inserisci i primi 5 numeri del codice alfanumerico (${code})`,
+      title: `Inserisci i primi 5 numeri del codice alfanumerico`,
       answer: code.replace(/\D/g, "").slice(0, 5),
     };
   }
@@ -56,12 +56,8 @@ export default class CharacterQuestion extends TextQuestion<
   static lastNumbers(code: string) {
     return {
       type: "last-numbers" as const,
-      title: `Inserisci i primi 5 numeri del codice alfanumerico (${code})`,
+      title: `Inserisci gli ultimi 5 numeri del codice alfanumerico`,
       answer: code.replace(/\D/g, "").slice(-5),
     };
-  }
-
-  protected showAnswer(): boolean {
-    return false;
   }
 }
