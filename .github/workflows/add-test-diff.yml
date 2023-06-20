@@ -48,7 +48,7 @@ jobs:
       - name: Read file content and set as environment variable
         id: read-file
         run: |
-          echo "::set-output name=content::$(printf "%b" "$(cat file.txt)")"
+          echo "::set-output name=content::$(printf "%b" "$(cat tests_diff.txt)")"
 
       - name: Comment on pull request
         uses: peter-evans/create-or-update-comment@v1
