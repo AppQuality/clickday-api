@@ -43,26 +43,13 @@ jobs:
 
       - name: Compare tests
         run: |
-          diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
+          echo "*Tests difference:*"  > tests_diff.txt
+          echo "```"  >> tests_diff.txt
+          diff origin_tests.txt destination_tests.txt >> tests_diff.txt || true
+          echo "```"  >> tests_diff.txt
 
-      - name: Read file content and set as environment variable
-        id: read-file
-        run: |
-          echo 'RESULT<<EOF' >> $GITHUB_ENV
-          cat tests_diff.txt >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-
-      - name: Comment on pull request
-        uses: peter-evans/create-or-update-comment@v1
+      - name: PR comment with file
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            **Tests Difference:**
-
-            ```
-            ${{ env.RESULT }}
-            ```
-
-      - name: Cleanup
-        run: |
-          rm origin_tests.txt destination_tests.txt tests_diff.txt
+          filePath: tests_diff.txt
+          comment_tag: "Tests Difference"
