@@ -48,7 +48,9 @@ jobs:
       - name: Read file content and set as environment variable
         id: read-file
         run: |
-          echo "::set-output name=content::$(printf "%b" "$(cat tests_diff.txt)")"
+          echo 'RESULT<<EOF' >> $GITHUB_ENV
+          cat tests_diff.txt >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: Comment on pull request
         uses: peter-evans/create-or-update-comment@v1
@@ -58,7 +60,7 @@ jobs:
             **Tests Difference:**
 
             ```
-            ${{ steps.read-file.outputs.content }}
+            ${{ env.RESULT }}
             ```
 
       - name: Cleanup
