@@ -5,9 +5,6 @@ import request from "supertest";
 jest.mock("@src/middleware/getExample");
 
 describe("App", () => {
-  it("1+1 should be 2", () => {
-    expect(1 + 1).toBe(2);
-  });
   it("should return a valid app", () => {
     expect(app).toBeInstanceOf(Function);
   });
