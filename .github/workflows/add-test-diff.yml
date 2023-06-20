@@ -17,11 +17,13 @@ jobs:
           node-version: 14
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          echo //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }} > .npmrc
+          yarn --frozen-lockfile
 
       - name: Extract tests from origin branch
         run: |
-          yarn extract origin_tests.txt"
+          yarn extract origin_tests.txt
         env:
           CI: true
 
@@ -29,7 +31,8 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           git checkout ${{ github.base_ref }}
-          yarn install
+          echo //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }} > .npmrc
+          yarn --frozen-lockfile
           yarn extract destination_tests.txt
         env:
           CI: true
