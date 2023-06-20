@@ -45,6 +45,11 @@ jobs:
         run: |
           diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
 
+      - name: Read file content and set as environment variable
+        id: read-file
+        run: |
+          echo "::set-output name=content::$(cat tests_diff.txt)"
+
       - name: Comment on pull request
         uses: peter-evans/create-or-update-comment@v1
         with:
@@ -53,7 +58,7 @@ jobs:
             **Tests Difference:**
 
             ```
-            $(cat tests_diff.txt)
+            ${{ steps.read-file.outputs.content }}
             ```
 
       - name: Cleanup
