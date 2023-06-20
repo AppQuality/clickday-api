@@ -43,7 +43,7 @@ jobs:
 
       - name: Compare tests
         run: |
-          diff origin_tests.txt destination_tests.txt > tests_diff.txt
+          diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
 
       - name: Comment on pull request
         uses: peter-evans/create-or-update-comment@v1
