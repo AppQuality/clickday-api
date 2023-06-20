@@ -1,10 +1,13 @@
 import app from "@src/app";
-import request from "supertest";
-import fs from "fs";
 import getExample from "@src/middleware/getExample";
+import fs from "fs";
+import request from "supertest";
 jest.mock("@src/middleware/getExample");
 
 describe("App", () => {
+  it("1+1 should be 2", () => {
+    expect(1 + 1).toBe(2);
+  });
   it("should return a valid app", () => {
     expect(app).toBeInstanceOf(Function);
   });
