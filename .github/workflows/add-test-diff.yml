@@ -43,19 +43,34 @@ jobs:
 
       - name: Compare tests
         run: |
-          diff origin_tests.txt destination_tests.txt > tests_diff.txt
+          diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
 
-      - name: Comment on pull request
-        uses: peter-evans/create-or-update-comment@v1
+          touch new_tests.txt
+          NEW_TESTS_LINES=$(cat tests_diff.txt | grep "<" | wc -l)
+          if [ $NEW_TESTS_LINES -gt 0 ]; then
+              echo "**New Tests**" > new_tests.txt
+              echo "\`\`\`"  >> new_tests.txt
+              cat tests_diff.txt | grep "<" >> new_tests.txt
+              echo "\`\`\`"  >> new_tests.txt
+          fi
+
+          touch removed_tests.txt
+          REMOVED_TESTS_LINES=$(cat tests_diff.txt | grep ">" | wc -l)
+          if [ $REMOVED_TESTS_LINES -gt 0 ]; then
+              echo "**Removed Tests**" > removed_tests.txt
+              echo "\`\`\`"  >> removed_tests.txt
+              cat tests_diff.txt | grep ">" >> removed_tests.txt
+              echo "\`\`\`"  >> removed_tests.txt
+          fi
+
+
+          echo "### Tests difference:"  > comment.txt
+          cat new_tests.txt >> comment.txt
+          cat removed_tests.txt >> comment.txt
+          cat comment.txt
+
+      - name: PR comment with file
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            **Tests Difference:**
-
-            ```
-            $(cat tests_diff.txt)
-            ```
-
-      - name: Cleanup
-        run: |
-          rm origin_tests.txt destination_tests.txt tests_diff.txt
+          filePath: comment.txt
+          comment_tag: "Tests Difference"

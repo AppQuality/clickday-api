@@ -1,7 +1,7 @@
 import app from "@src/app";
-import request from "supertest";
-import fs from "fs";
 import getExample from "@src/middleware/getExample";
+import fs from "fs";
+import request from "supertest";
 jest.mock("@src/middleware/getExample");
 
 describe("App", () => {
