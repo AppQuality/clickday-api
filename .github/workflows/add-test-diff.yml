@@ -43,7 +43,7 @@ jobs:
 
       - name: Compare tests
         run: |
-          echo "*Tests difference:*"  > tests_diff.txt
+          echo "### Tests difference:"  > tests_diff.txt
           echo "\`\`\`"  >> tests_diff.txt
           diff origin_tests.txt destination_tests.txt >> tests_diff.txt || true
           echo "\`\`\`"  >> tests_diff.txt
