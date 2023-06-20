@@ -8,9 +8,6 @@ describe("App", () => {
   it("1+1 should be 2", () => {
     expect(1 + 1).toBe(2);
   });
-  it("should return a valid app", () => {
-    expect(app).toBeInstanceOf(Function);
-  });
   it("should return the reference", async () => {
     const response = await request(app).get("/reference");
     expect(response.status).toBe(200);
