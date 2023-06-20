@@ -12,6 +12,7 @@
     "transpile": "tsc --noEmit false && tsc-alias",
     "copy-reference": "copyfiles -f src/reference/* dist/reference/",
     "build": "npm-run-all clean transpile copy-reference",
+    "extract": "tsnd --quiet ./extract_tests.ts",
     "start": "tsnd --respawn -r tsconfig-paths/register  --transpile-only  ./src/index.ts",
     "postinstall": "husky install",
     "types": "openapi-typescript src/reference/openapi.yml --output src/schema.ts "
@@ -34,6 +35,7 @@
     "wordpress-hash-node": "^1.0.0"
   },
   "devDependencies": {
+    "@appquality/jest-extract": "^1.3.0",
     "@swc/core": "^1.3.50",
     "@swc/jest": "^0.2.26",
     "@types/cors": "^2.8.12",
