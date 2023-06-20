@@ -46,12 +46,12 @@ jobs:
 
           diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
 
-          echo "** New Tests ***" > new_tests.txt
+          echo "**New Tests**" > new_tests.txt
           echo "\`\`\`"  >> new_tests.txt
           cat tests_diff.txt | grep "<" >> new_tests.txt
           echo "\`\`\`"  >> new_tests.txt
 
-          echo "** Removed Tests ***" > removed_tests.txt
+          echo "**Removed Tests**" > removed_tests.txt
           echo "\`\`\`"  >> removed_tests.txt
           cat tests_diff.txt | grep ">" >> removed_tests.txt
           echo "\`\`\`"  >> removed_tests.txt
