@@ -43,11 +43,23 @@ jobs:
 
       - name: Compare tests
         run: |
-          echo "### Tests difference:"  > tests_diff.txt
-          echo "\`\`\`"  >> tests_diff.txt
-          diff origin_tests.txt destination_tests.txt >> tests_diff.txt || true
-          echo "\`\`\`"  >> tests_diff.txt
-          cat tests_diff.txt
+
+          diff origin_tests.txt destination_tests.txt > tests_diff.txt || true
+
+          echo "** New Tests ***" > new_tests.txt
+          echo "\`\`\`"  >> new_tests.txt
+          cat test_diff.txt | grep "<" >> new_tests.txt
+          echo "\`\`\`"  >> new_tests.txt
+
+          echo "** Removed Tests ***" > removed_tests.txt
+          echo "\`\`\`"  >> removed_tests.txt
+          cat test_diff.txt | grep ">" >> removed_tests.txt
+          echo "\`\`\`"  >> removed_tests.txt
+
+          echo "### Tests difference:"  > comment.txt
+          cat new_tests.txt >> comment.txt
+          cat removed_tests.txt >> comment.txt
+          cat comment.txt
 
       - name: PR comment with file
         uses: thollander/actions-comment-pull-request@v2
