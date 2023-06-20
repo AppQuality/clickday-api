@@ -23,7 +23,9 @@ jobs:
 
       - name: Extract tests from origin branch
         run: |
-          yarn extract origin_tests.txt
+          yarn extract tests.txt
+          cat tests.txt | sort > origin_tests.txt
+          rm tests.txt
         env:
           CI: true
 
@@ -33,14 +35,15 @@ jobs:
           git checkout ${{ github.base_ref }}
           echo //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }} > .npmrc
           yarn --frozen-lockfile
-          yarn extract destination_tests.txt
+          yarn extract tests.txt
+          cat tests.txt | sort > destination_tests.txt
+          rm tests.txt
         env:
           CI: true
 
       - name: Compare tests
         run: |
-          DIFF=$(diff origin_tests.txt destination_tests.txt)
-          echo "$DIFF" > tests_diff.txt
+          diff origin_tests.txt destination_tests.txt > tests_diff.txt
 
       - name: Comment on pull request
         uses: peter-evans/create-or-update-comment@v1
