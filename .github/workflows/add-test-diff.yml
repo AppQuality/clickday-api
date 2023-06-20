@@ -47,6 +47,7 @@ jobs:
           echo "```"  >> tests_diff.txt
           diff origin_tests.txt destination_tests.txt >> tests_diff.txt || true
           echo "```"  >> tests_diff.txt
+          cat tests_diff.txt
 
       - name: PR comment with file
         uses: thollander/actions-comment-pull-request@v2
