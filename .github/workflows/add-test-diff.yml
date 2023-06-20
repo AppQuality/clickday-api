@@ -48,12 +48,12 @@ jobs:
 
           echo "** New Tests ***" > new_tests.txt
           echo "\`\`\`"  >> new_tests.txt
-          cat test_diff.txt | grep "<" >> new_tests.txt
+          cat tests_diff.txt | grep "<" >> new_tests.txt
           echo "\`\`\`"  >> new_tests.txt
 
           echo "** Removed Tests ***" > removed_tests.txt
           echo "\`\`\`"  >> removed_tests.txt
-          cat test_diff.txt | grep ">" >> removed_tests.txt
+          cat tests_diff.txt | grep ">" >> removed_tests.txt
           echo "\`\`\`"  >> removed_tests.txt
 
           echo "### Tests difference:"  > comment.txt
