@@ -83,6 +83,8 @@ export default class Route extends UserRoute<{
         agency_code: this.code,
         tester_id: this.getTesterId(),
       })
+      // When there are multiple attempts, we want the last one
+      .orderBy("id", "desc")
       .first();
     if (!attempt) {
       throw new Error("Attempt not found");
