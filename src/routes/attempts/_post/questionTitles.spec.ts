@@ -143,7 +143,6 @@ describe("POST /attempts questions titles", () => {
       .first();
     if (!question)
       throw new Error("No question found for first/last - character/numbers");
-
     expect(response.body.questions).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
