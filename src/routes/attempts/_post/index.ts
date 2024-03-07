@@ -148,7 +148,7 @@ export default class Route extends UserRoute<{
   }
 
   private async generateCodeQuestion(attempt_id: number) {
-    const result = new CharacterQuestion(this.code);
+    const result = new CharacterQuestion(" ");
     await result.insert(attempt_id);
     return result.question();
   }

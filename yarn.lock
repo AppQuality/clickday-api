@@ -20,10 +20,10 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
-"@appquality/clickday-database@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@appquality/clickday-database/-/clickday-database-0.9.0.tgz#d3fb14e574a3d45f5747590d35b7709368c55fd8"
-  integrity sha512-P6b1fHRei1n33b0CvPYA07QyuHpGe7sOYK79jAXMTaNPixszGw/85idAjrlFnoon0M6+/DV9zOgZevybLkfoYw==
+"@appquality/clickday-database@^1.0.0":
+  version "0.12.22"
+  resolved "https://registry.yarnpkg.com/@appquality/clickday-database/-/clickday-database-0.12.22.tgz#b0d3651eb50b8fb78ee9fdd3472443b3cb619dfa"
+  integrity sha512-gpLdHuTPQFhW5gicBE1KHQBL8gF/pDWSM2D7tJTfhC3jEGGO+bcbl4NLg/UaJ5lFkd6reIcXtUGQGSnr7IXYgA==
   dependencies:
     better-sqlite3 "^8.1.0"
     knex "^2.4.2"
@@ -977,6 +977,11 @@
   integrity sha512-X3HPWTwXRerBZS7Mo1k6vMVR1Z6zmJcDVn5O/31whe0tnjE4te6ZJSJGq1RiqHPjzPdMTfjCFogDJmwng9xHaQ==
   dependencies:
     "@types/superagent" "*"
+
+"@types/uuid@^9.0.8":
+  version "9.0.8"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.8.tgz#7545ba4fc3c003d6c756f651f3bf163d8f0f29ba"
+  integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
 
 "@types/wordpress-hash-node@^1.0.0":
   version "1.0.0"
@@ -4569,6 +4574,11 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
+
+uuid@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
