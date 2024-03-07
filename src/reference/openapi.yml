@@ -333,6 +333,7 @@ paths:
                         yourAnswer: mario@rossi.me
                         correctAnswer: pippo@franco.me
       security:
+        - {}
         - JWT: []
       requestBody:
         content:
@@ -408,6 +409,8 @@ paths:
                   x-stoplight:
                     id: 8wbzbckyfgq6j
       description: "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
+      security:
+        - JWT: []
   '/events/{id}/attempt':
     parameters:
       - schema:
