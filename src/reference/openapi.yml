@@ -357,7 +357,7 @@ paths:
       description: Complete an attempt with a list of answers
   /events:
     get:
-      summary: Get all events
+      summary: Get incoming event
       tags: []
       responses:
         '200':
@@ -365,9 +365,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                  event:
+                    $ref: '#/components/schemas/Event'
+                  available:
+                    type: boolean
+                    x-stoplight:
+                      id: 8ti4eheybtwo5
       operationId: get-events
       security:
         - JWT: []
@@ -387,9 +392,21 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - title
+                - start_date
+                - end_date
               properties:
                 title:
                   type: string
+                start_date:
+                  type: string
+                  x-stoplight:
+                    id: jppwj9l9a8uam
+                end_date:
+                  type: string
+                  x-stoplight:
+                    id: 8wbzbckyfgq6j
       description: "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
   '/events/{id}/attempt':
     parameters:
@@ -577,14 +594,11 @@ components:
       required:
         - id
         - title
-        - available
       properties:
         id:
           type: integer
         title:
           type: string
-        available:
-          type: boolean
   securitySchemes:
     JWT:
       type: http
