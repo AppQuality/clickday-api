@@ -390,10 +390,6 @@ paths:
               properties:
                 title:
                   type: string
-                slug:
-                  type: string
-                  x-stoplight:
-                    id: w423iutjjvlnb
       description: "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
   '/events/{id}/attempt':
     parameters:
@@ -581,14 +577,11 @@ components:
       required:
         - id
         - title
-        - slug
         - available
       properties:
         id:
           type: integer
         title:
-          type: string
-        slug:
           type: string
         available:
           type: boolean
