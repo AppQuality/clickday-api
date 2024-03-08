@@ -48,6 +48,18 @@ describe("GET /events", () => {
     expect(response.status).toBe(200);
   });
 
+  it("Should return the first available event", async () => {
+    const response = await request(app)
+      .get("/events")
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        title: "Event available 1",
+      })
+    );
+  });
+
   it("Should return 404 if no event is found", async () => {
     await clickDay.tables.CdEvents.do().delete();
 
@@ -70,18 +82,6 @@ describe("GET /events", () => {
       .get("/events")
       .set("Authorization", "Bearer tester");
     expect(response.status).toBe(404);
-  });
-
-  it("Should return the first available event", async () => {
-    const response = await request(app)
-      .get("/events")
-      .set("Authorization", "Bearer tester");
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual(
-      expect.objectContaining({
-        title: "Event available 1",
-      })
-    );
   });
 
   it("Should return the next available event if the current event is expired and the start_date of the next event is > now", async () => {
