@@ -30,6 +30,12 @@ export default class Route extends UserRoute<{
   }
 
   protected async filter(): Promise<boolean> {
+    // Admin only
+    if (this.getUser().role !== "administrator") {
+      this.setError(403, new OpenapiError("Unauthorized"));
+      return false;
+    }
+
     if (new Date(this.start_date) > new Date(this.end_date)) {
       this.setError(
         400,

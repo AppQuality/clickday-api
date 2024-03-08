@@ -31,7 +31,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(200);
   });
 
@@ -39,7 +39,7 @@ describe("POST /events", () => {
     const response = await request(app)
       .post("/events")
       .send({})
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
   });
 
@@ -51,7 +51,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Event already exists");
   });
@@ -64,7 +64,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
   });
 
@@ -75,7 +75,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
   });
 
@@ -86,7 +86,7 @@ describe("POST /events", () => {
         title: "new title",
         end: "2021-08-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
   });
 
@@ -97,7 +97,7 @@ describe("POST /events", () => {
         title: "new title",
         start: "2021-08-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
   });
 
@@ -109,7 +109,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-07-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       "The start date must be before the end date"
@@ -124,7 +124,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
       expect.objectContaining({ title: "New Title 2" })
@@ -139,7 +139,7 @@ describe("POST /events", () => {
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })
-      .set("authorization", "Bearer tester");
+      .set("authorization", "Bearer admin");
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
       expect.objectContaining({ title: "TestTitle 2" })
@@ -148,5 +148,18 @@ describe("POST /events", () => {
       .select()
       .where("event_id", response.body.id);
     expect(attempt.length).toBe(1);
+  });
+
+  it("Should fail if the user is not an administator", async () => {
+    const response = await request(app)
+      .post("/events")
+      .send({
+        title: "New Title 2",
+        start_date: "2021-08-01T00:00:00.000Z",
+        end_date: "2021-09-01T00:00:00.000Z",
+      })
+      .set("authorization", "Bearer tester");
+    console.log(response.body);
+    expect(response.status).toBe(403);
   });
 });
