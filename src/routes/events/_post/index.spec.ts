@@ -129,6 +129,10 @@ describe("POST /events", () => {
     expect(response.body).toEqual(
       expect.objectContaining({ title: "New Title 2" })
     );
+    const event = await clickDay.tables.CdEvents.do().select().where({
+      title: "New Title 2",
+    });
+    expect(event.length).toBe(1);
   });
 
   it("Should create an attempt and assign it to the event on creation", async () => {
