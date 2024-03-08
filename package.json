@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@appquality/clickday-database": "0.12.22",
+    "@appquality/clickday-database": "0.12.23",
     "@appquality/tryber-database": "0.26.22",
     "@appquality/wp-auth": "^1.0.7",
     "@types/uuid": "^9.0.8",
