@@ -156,6 +156,7 @@ describe("POST /events", () => {
       .select()
       .where("event_id", response.body.id);
     expect(eventToAttempt.length).toBe(1);
+    expect(eventToAttempt[0].is_blueprint).toBe(1);
     const attempt = await clickDay.tables.CdAttempts.do().select().where({
       id: eventToAttempt[0].attempt_id,
     });
