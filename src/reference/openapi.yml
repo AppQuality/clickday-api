@@ -372,8 +372,6 @@ paths:
                     $ref: '#/components/schemas/Event'
                   available:
                     type: boolean
-                    x-stoplight:
-                      id: 8ti4eheybtwo5
       operationId: get-events
       security:
         - JWT: []
@@ -402,13 +400,9 @@ paths:
                   type: string
                 start_date:
                   type: string
-                  x-stoplight:
-                    id: jppwj9l9a8uam
                 end_date:
                   type: string
-                  x-stoplight:
-                    id: 8wbzbckyfgq6j
-      description: "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
+      description: ''
       security:
         - JWT: []
   '/events/{id}/attempt':
