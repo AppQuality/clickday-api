@@ -175,7 +175,6 @@ describe("POST /events", () => {
         end_date: "2021-09-01T00:00:00.000Z",
       })
       .set("authorization", "Bearer tester");
-    console.log(response.body);
     expect(response.status).toBe(403);
   });
 });
