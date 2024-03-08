@@ -20,7 +20,7 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
-"@appquality/clickday-database@^1.0.0":
+"@appquality/clickday-database@0.12.22":
   version "0.12.22"
   resolved "https://registry.yarnpkg.com/@appquality/clickday-database/-/clickday-database-0.12.22.tgz#b0d3651eb50b8fb78ee9fdd3472443b3cb619dfa"
   integrity sha512-gpLdHuTPQFhW5gicBE1KHQBL8gF/pDWSM2D7tJTfhC3jEGGO+bcbl4NLg/UaJ5lFkd6reIcXtUGQGSnr7IXYgA==
@@ -29,10 +29,10 @@
     knex "^2.4.2"
     mysql "^2.18.1"
 
-"@appquality/tryber-database@^0.18.1":
-  version "0.18.1"
-  resolved "https://registry.yarnpkg.com/@appquality/tryber-database/-/tryber-database-0.18.1.tgz#974cdb4d21ad37079adc5d983e58b483e553372a"
-  integrity sha512-tlA/c5w07byzcvMDqLlVFxEwWSBvCBDhWqtNYgXzZiGVn5VU4KLhsx8AfJ+lELygIw0w8v/Ib7Foggfw0laXLQ==
+"@appquality/tryber-database@0.26.22":
+  version "0.26.22"
+  resolved "https://registry.yarnpkg.com/@appquality/tryber-database/-/tryber-database-0.26.22.tgz#a4e10d6d84296999c62dbaaaf5f26327a3bab62d"
+  integrity sha512-HIv/p3N5dof188fsFms0tNuiBNPM0FWpm1fn9RSClnAoPkghWxupgQ6G7jqzx1c/ht/pJfR02yH7hBcd6mkBHw==
   dependencies:
     better-sqlite3 "^8.1.0"
     knex "^2.5.1"
