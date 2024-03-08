@@ -52,9 +52,9 @@ export default class Route extends UserRoute<{
     }
     return true;
   }
+
   protected async prepare() {
     const event = await this.createEvent();
-
     const attempt_id = await this.createAttempt();
     await this.assignEventToAttempt(attempt_id, event[0].id);
     await this.generateEmailQuestion(attempt_id);
@@ -93,9 +93,8 @@ export default class Route extends UserRoute<{
   private async createAttempt() {
     const attempt = await clickDay.tables.CdAttempts.do()
       .insert({
-        agency_code: " ",
         tester_id: 1,
-        start_time: new Date().toISOString().replace("T", " ").split(".")[0],
+        agency_code: this.code,
       })
       .returning("id");
     if (!attempt) {

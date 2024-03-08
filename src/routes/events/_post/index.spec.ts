@@ -148,10 +148,22 @@ describe("POST /events", () => {
     expect(response.body).toEqual(
       expect.objectContaining({ title: "TestTitle 2" })
     );
-    const attempt = await clickDay.tables.CdEventsToAttempts.do()
+    const event = await clickDay.tables.CdEvents.do().select().where({
+      title: "TestTitle 2",
+    });
+    expect(event.length).toBe(1);
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
       .select()
       .where("event_id", response.body.id);
+    expect(eventToAttempt.length).toBe(1);
+    const attempt = await clickDay.tables.CdAttempts.do().select().where({
+      id: eventToAttempt[0].attempt_id,
+    });
     expect(attempt.length).toBe(1);
+    const questions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where("attempt_id", attempt[0].id);
+    expect(questions.length).toBe(9);
   });
 
   it("Should fail if the user is not an administator", async () => {
