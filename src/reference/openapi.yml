@@ -369,8 +369,6 @@ paths:
                 properties:
                   event:
                     $ref: '#/components/schemas/Event'
-                  available:
-                    type: boolean
       operationId: get-events
       security:
         - JWT: []
