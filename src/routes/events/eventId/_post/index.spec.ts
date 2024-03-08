@@ -195,4 +195,6 @@ describe("POST /events/{id}/attempt", () => {
   });
 
   // it should create an attempt connected to the event with is_blueprint = 0
+
+  // it should return the attempt id, the start time and the questions of the event blueprint attempt
 });
