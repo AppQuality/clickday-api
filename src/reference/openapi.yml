@@ -365,10 +365,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  event:
-                    $ref: '#/components/schemas/Event'
+                $ref: '#/components/schemas/Event'
       operationId: get-events
       security:
         - JWT: []
