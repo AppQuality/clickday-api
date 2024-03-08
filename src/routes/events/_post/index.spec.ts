@@ -52,7 +52,6 @@ describe("POST /events", () => {
         end_date: "2021-09-01T00:00:00.000Z",
       })
       .set("authorization", "Bearer tester");
-    console.log(response.body);
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Event already exists");
   });
@@ -66,7 +65,6 @@ describe("POST /events", () => {
         end_date: "2021-09-01T00:00:00.000Z",
       })
       .set("authorization", "Bearer tester");
-    console.log(response.body);
     expect(response.status).toBe(400);
   });
 
@@ -112,7 +110,6 @@ describe("POST /events", () => {
         end_date: "2021-07-01T00:00:00.000Z",
       })
       .set("authorization", "Bearer tester");
-    console.log(response.body);
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(
       "The start date must be before the end date"
@@ -143,7 +140,6 @@ describe("POST /events", () => {
         end_date: "2021-09-01T00:00:00.000Z",
       })
       .set("authorization", "Bearer tester");
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(
       expect.objectContaining({ title: "TestTitle 2" })

@@ -32,10 +32,6 @@ describe("POST /attempts questions options length should be a random number", ()
         (question: { slug: string }) => question.slug === currentQuestion.slug
       ).options.length;
 
-      if (currentQuestion.slug === "month-vocals") {
-        console.log(response.body.questions);
-      }
-
       expect(optionsLength).toBeGreaterThanOrEqual(currentQuestion.minOptions);
       expect(optionsLength).toBeLessThanOrEqual(currentQuestion.maxOptions);
     }
