@@ -34,7 +34,6 @@ export interface paths {
   };
   "/events": {
     get: operations["get-events"];
-    /**  */
     post: operations["post-events"];
   };
   "/events/{id}/attempt": {
@@ -233,15 +232,11 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json": {
-            event?: components["schemas"]["Event"];
-            available?: boolean;
-          };
+          "application/json": components["schemas"]["Event"];
         };
       };
     };
   };
-  /**  */
   "post-events": {
     responses: {
       /** OK */
