@@ -194,7 +194,53 @@ describe("POST /events/{id}/attempt", () => {
     expect(response.status).toBe(200);
   });
 
-  // it should create an attempt connected to the event with is_blueprint = 0
-
-  // it should return the attempt id, the start time and the questions of the event blueprint attempt
+  it("Should create an attempt connected to the event with is_blueprint = 0", async () => {
+    const response = await request(app)
+      .post(`/events/${event_1.id}/attempt`)
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where({
+        event_id: event_1.id,
+        attempt_id: response.body.id,
+        is_blueprint: 0,
+      })
+      .first();
+    expect(eventToAttempt).toBeTruthy();
+  });
+  it("Should return the attempt id, the start time and the questions of the event blueprint attempt", async () => {
+    const response = await request(app)
+      .post(`/events/${event_1.id}/attempt`)
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    const eventAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where({ event_id: event_1.id, is_blueprint: 1 })
+      .first();
+    const eventAttemptQuestions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where({ attempt_id: eventAttempt?.attempt_id });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        startTime: start.toISOString(),
+        questions: eventAttemptQuestions.map((question) => {
+          if (question.input_type === "dropdown") {
+            return {
+              title: question.title,
+              type: question.input_type as "dropdown",
+              slug: question.type,
+              options: question.options.split(","),
+            };
+          } else {
+            return {
+              title: question.title,
+              type: question.input_type as "text",
+              slug: question.type,
+            };
+          }
+        }),
+      })
+    );
+  });
 });
