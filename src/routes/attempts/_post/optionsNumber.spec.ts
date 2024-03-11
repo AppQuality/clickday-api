@@ -10,7 +10,7 @@ describe("POST /attempts questions options length should be a random number", ()
 
   const questionsOptionsRanges = [
     { slug: "email", minOptions: 6, maxOptions: 9 },
-    { slug: "month-vocals", minOptions: 6, maxOptions: 9 },
+    { slug: "month-vocals", minOptions: 6, maxOptions: 12 },
     { slug: "last-numbers-bando", minOptions: 3, maxOptions: 6 },
     { slug: "bando", minOptions: 4, maxOptions: 6 },
     { slug: "amount", minOptions: 6, maxOptions: 9 },
@@ -31,6 +31,7 @@ describe("POST /attempts questions options length should be a random number", ()
       const optionsLength = response.body.questions.find(
         (question: { slug: string }) => question.slug === currentQuestion.slug
       ).options.length;
+
       expect(optionsLength).toBeGreaterThanOrEqual(currentQuestion.minOptions);
       expect(optionsLength).toBeLessThanOrEqual(currentQuestion.maxOptions);
     }

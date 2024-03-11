@@ -32,12 +32,31 @@ export interface paths {
       };
     };
   };
+  "/events": {
+    get: operations["get-events"];
+    post: operations["post-events"];
+  };
+  "/events/{id}/attempt": {
+    post: operations["post-events-id-attempt"];
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
 }
 
 export interface components {
   schemas: {
     SelectQuestionSlug: string;
     TextQuestionSlug: string;
+    /** Event */
+    Event: {
+      id: number;
+      title: string;
+      start_date: string;
+      end_date: string;
+    };
   };
   responses: {
     /** Authentication data. The token can be used to authenticate the protected requests */
@@ -207,6 +226,69 @@ export interface operations {
             | components["schemas"]["TextQuestionSlug"];
           answer: string;
         }[];
+      };
+    };
+  };
+  "get-events": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Event"];
+        };
+      };
+    };
+  };
+  "post-events": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Event"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          title: string;
+          start_date: string;
+          end_date: string;
+        };
+      };
+    };
+  };
+  "post-events-id-attempt": {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            id: number;
+            /** Format: date-time */
+            startTime: string;
+            questions: ({
+              title: string;
+            } & (
+              | {
+                  /** @enum {string} */
+                  type: "dropdown";
+                  options: string[];
+                  slug: components["schemas"]["SelectQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
+            ))[];
+          };
+        };
       };
     };
   };

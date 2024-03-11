@@ -30,10 +30,10 @@ export default class MonthVocalsQuestion extends DropdownQuestion<"month-vocals"
         "iuo",
         "uio",
         "ao",
-        "e",
-        "oe",
-        "oe",
-        "ie",
+        "eee",
+        "ooe",
+        "oee",
+        "iee",
       ]
     );
   }

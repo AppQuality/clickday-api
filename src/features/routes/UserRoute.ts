@@ -3,6 +3,7 @@ import Route from "./Route";
 export default class UserRoute<T extends RouteClassTypes> extends Route<T> {
   private testerId: number;
   private wordpressId: number;
+  private user: UserType;
 
   constructor(
     configuration: RouteClassConfiguration & {
@@ -16,6 +17,7 @@ export default class UserRoute<T extends RouteClassTypes> extends Route<T> {
     });
     this.testerId = this.configuration.request.user.testerId;
     this.wordpressId = parseInt(this.configuration.request.user.ID);
+    this.user = this.configuration.request.user;
   }
 
   protected getTesterId() {
@@ -23,5 +25,8 @@ export default class UserRoute<T extends RouteClassTypes> extends Route<T> {
   }
   protected getWordpressId() {
     return this.wordpressId;
+  }
+  protected getUser() {
+    return this.user;
   }
 }
