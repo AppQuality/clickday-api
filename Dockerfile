@@ -1,5 +1,5 @@
-FROM node:18-alpine3.16 AS node
-FROM alpine:3.16 as base
+FROM node:18-alpine3.18 AS node
+FROM alpine:3.18 as base
 
 RUN apk add nodejs yarn
 COPY package.json ./
@@ -13,7 +13,7 @@ COPY . .
 
 RUN yarn build
 
-FROM alpine:3.14 as web
+FROM alpine:3.18 as web
 
 COPY --from=base /dist /app/build
 COPY package*.json /app/
