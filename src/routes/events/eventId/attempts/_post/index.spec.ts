@@ -1,5 +1,6 @@
 import app from "@src/app";
 import { clickDay } from "@src/features/database";
+import e from "cors";
 import request from "supertest";
 
 const event_1 = {
@@ -194,7 +195,7 @@ describe("POST /events/{id}/attempt", () => {
     expect(response.status).toBe(200);
   });
 
-  it("Should create an attempt connected to the event with is_blueprint = 0", async () => {
+  it("Should create an attempt connected to the event with is_blueprint = 0 with all its questions", async () => {
     const response = await request(app)
       .post(`/events/${event_1.id}/attempt`)
       .set("Authorization", "Bearer tester");
@@ -208,7 +209,12 @@ describe("POST /events/{id}/attempt", () => {
       })
       .first();
     expect(eventToAttempt).toBeTruthy();
+    const eventAttemptQuestions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where({ attempt_id: response.body.id });
+    expect(eventAttemptQuestions).toHaveLength(9);
   });
+
   it("Should return the attempt id, the start time and the questions of the event blueprint attempt", async () => {
     const response = await request(app)
       .post(`/events/${event_1.id}/attempt`)

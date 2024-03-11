@@ -52,6 +52,22 @@ export default class Route extends EventRoute<{
       attempt_id: attempt.id,
       is_blueprint: 0,
     });
+
+    const eventAttemptQuestions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where({ attempt_id: blueprintAttempt.id });
+
+    for (const question of eventAttemptQuestions) {
+      await clickDay.tables.CdAttemptsQuestions.do().insert({
+        attempt_id: attempt.id,
+        type: question.type,
+        correct_answer: question.correct_answer,
+        input_type: question.input_type,
+        title: question.title,
+        ...(question.options && { options: question.options }),
+      });
+    }
+
     return attempt;
   }
 }
