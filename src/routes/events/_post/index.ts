@@ -103,7 +103,7 @@ export default class Route extends UserRoute<{
     if (!attempt) {
       throw new Error("Attempt creation failed");
     }
-    return attempt[0].id;
+    return attempt[0].id ?? attempt[0];
   }
   private async assignEventToAttempt(attempt_id: number, event_id: number) {
     const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do().insert(
