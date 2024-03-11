@@ -22,6 +22,9 @@ export default class Question<T extends string, K extends "text" | "dropdown"> {
       attempt_id,
       type: this.slug,
       correct_answer: this.correct,
+      input_type: this.type,
+      title: this.title,
+      options: this.options ? this.options.join(",") : undefined,
     });
   }
 
