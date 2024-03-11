@@ -71,6 +71,8 @@ export default class Route extends UserRoute<{
     this.setSuccess(200, {
       id: event.id,
       title: event.title,
+      start_date: event.start_date,
+      end_date: event.end_date,
     });
   }
 
@@ -82,7 +84,7 @@ export default class Route extends UserRoute<{
         start_date: this.start_date,
         end_date: this.end_date,
       })
-      .returning(["id", "title"]);
+      .returning(["id", "title", "start_date", "end_date"]);
 
     if (!event) {
       throw new Error("Event creation failed");
@@ -90,6 +92,8 @@ export default class Route extends UserRoute<{
     return {
       id: event[0].id ?? event[0],
       title: event[0].title ?? this.title,
+      start_date: event[0].start_date ?? this.start_date,
+      end_date: event[0].end_date ?? this.end_date,
     };
   }
 
