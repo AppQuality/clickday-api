@@ -56,7 +56,7 @@ export default class Route extends UserRoute<{
   protected async prepare() {
     const event = await this.createEvent();
     const attempt_id = await this.createAttempt();
-    await this.assignEventToAttempt(attempt_id, event[0].id);
+    await this.assignEventToAttempt(attempt_id, event.id);
     await this.generateEmailQuestion(attempt_id);
     await this.generateVocalsOfMonthQuestion(attempt_id);
     const { question: bando, correct: correctBando } =
@@ -69,8 +69,8 @@ export default class Route extends UserRoute<{
     await this.generateCodeQuestion(attempt_id);
 
     this.setSuccess(200, {
-      id: event[0].id,
-      title: event[0].title,
+      id: event.id,
+      title: event.title,
     });
   }
 
@@ -87,7 +87,10 @@ export default class Route extends UserRoute<{
     if (!event) {
       throw new Error("Event creation failed");
     }
-    return event;
+    return {
+      id: event[0].id ?? event[0],
+      title: event[0].title ?? this.title,
+    };
   }
 
   private async createAttempt() {
