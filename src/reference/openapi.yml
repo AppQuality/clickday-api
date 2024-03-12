@@ -585,21 +585,11 @@ components:
       required:
         - id
         - title
-        - start_date
-        - end_date
       properties:
         id:
           type: integer
         title:
           type: string
-        start_date:
-          type: string
-          x-stoplight:
-            id: lvh2h4ag0hx5o
-        end_date:
-          type: string
-          x-stoplight:
-            id: ginhh35xd43dw
   securitySchemes:
     JWT:
       type: http
