@@ -249,4 +249,103 @@ describe("POST /events/{id}/attempt", () => {
       })
     );
   });
+
+  it("Shouldn't be possibile to create an attempt if the event is expired", async () => {
+    await clickDay.tables.CdEvents.do().delete();
+    await clickDay.tables.CdAttempts.do().delete();
+    await clickDay.tables.CdEventsToAttempts.do().delete();
+    await clickDay.tables.CdAttemptsQuestions.do().delete();
+
+    await clickDay.tables.CdEvents.do().insert({
+      id: 101,
+      title: "Event expired 1",
+      start_date: expired.toISOString(),
+      end_date: startAfter.toISOString(),
+    });
+
+    await clickDay.tables.CdAttempts.do().insert({
+      id: 101,
+      tester_id: 0,
+      agency_code:
+        "-f837a92059794c91a4ac452031ca2ca891ab5da4cf964a6b87f3811eb6ea8855",
+    });
+
+    for (const question of attempt_questions_1) {
+      await clickDay.tables.CdAttemptsQuestions.do().insert({
+        ...question,
+        attempt_id: 101,
+        options: question.options ? question.options.join(",") : undefined,
+      });
+    }
+
+    await clickDay.tables.CdEventsToAttempts.do().insert({
+      event_id: 101,
+      attempt_id: 101,
+      is_blueprint: 1,
+    });
+
+    const response = await request(app)
+      .post(`/events/101/attempt`)
+      .set("Authorization", "Bearer tester");
+
+    expect(response.status).toBe(400);
+  });
+
+  it("Shouldn't be possibile to create an attempt if the event is not started yet", async () => {
+    await clickDay.tables.CdEvents.do().delete();
+    await clickDay.tables.CdAttempts.do().delete();
+    await clickDay.tables.CdEventsToAttempts.do().delete();
+    await clickDay.tables.CdAttemptsQuestions.do().delete();
+
+    await clickDay.tables.CdEvents.do().insert({
+      id: 102,
+      title: "Event not started 1",
+      start_date: end.toISOString(),
+      end_date: end.toISOString(),
+    });
+
+    await clickDay.tables.CdAttempts.do().insert({
+      id: 102,
+      tester_id: 0,
+      agency_code:
+        "-f837a92059794c91a4ac452031ca2ca891ab5da4cf964a6b87f3811eb6ea8855",
+    });
+
+    for (const question of attempt_questions_1) {
+      await clickDay.tables.CdAttemptsQuestions.do().insert({
+        ...question,
+        attempt_id: 102,
+        options: question.options ? question.options.join(",") : undefined,
+      });
+    }
+
+    await clickDay.tables.CdEventsToAttempts.do().insert({
+      event_id: 102,
+      attempt_id: 102,
+      is_blueprint: 1,
+    });
+
+    const response = await request(app)
+      .post(`/events/102/attempt`)
+      .set("Authorization", "Bearer tester");
+
+    expect(response.status).toBe(400);
+  });
+
+  //
+  it("Shouldn't be possibile to create an attempt if the event doesn't exist", async () => {
+    const response = await request(app)
+      .post(`/events/99999/attempt`)
+      .set("Authorization", "Bearer tester");
+
+    expect(response.status).toBe(400);
+  });
+
+  it("Shouldn't be possibile to create an attempt if the event id path param is invalid", async () => {
+    const response = await request(app)
+      .post(`/events/asd/attempt`)
+      .set("Authorization", "Bearer tester");
+
+    expect(response.status).toBe(400);
+  });
 });

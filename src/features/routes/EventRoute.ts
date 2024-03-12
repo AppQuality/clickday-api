@@ -17,12 +17,13 @@ export default class EventRoute<
 
   protected async filter(): Promise<boolean> {
     try {
-      // Check if event exists
+      // Check if event exists and is active (start_date <= now <= end_date)
       const event = await this.getEvent();
       if (!event) {
         this.setError(400, new OpenapiError("Event not found"));
         return false;
       }
+
       return true;
     } catch (error) {
       this.setError(400, new OpenapiError("Something went wrong"));
@@ -35,9 +36,12 @@ export default class EventRoute<
   }
 
   protected async getEvent() {
+    const clickDayNow = clickDay.fn.now();
     const event = await clickDay.tables.CdEvents.do()
       .select()
       .where({ id: this.event_id })
+      .where("start_date", "<=", clickDayNow)
+      .where("end_date", ">=", clickDayNow)
       .first();
     if (!event) throw new Error("Event not found");
     return event;
