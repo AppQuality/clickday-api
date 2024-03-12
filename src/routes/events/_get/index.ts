@@ -12,8 +12,8 @@ export default class Route extends UserRoute<{
     return this.setSuccess(200, {
       id: event.id,
       title: event.title,
-      start_date: event.start_date.toString(),
-      end_date: event.end_date.toString(),
+      start_date: event.start_date,
+      end_date: event.end_date,
     });
   }
 
@@ -25,7 +25,6 @@ export default class Route extends UserRoute<{
       .where("end_date", ">=", clickDayNow)
       .orderBy("start_date", "asc")
       .first();
-
     return event;
   }
 
