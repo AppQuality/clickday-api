@@ -71,8 +71,6 @@ export default class Route extends UserRoute<{
     this.setSuccess(200, {
       id: event.id,
       title: event.title,
-      start_date: event.start_date,
-      end_date: event.end_date,
     });
   }
 

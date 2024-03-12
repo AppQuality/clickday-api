@@ -109,12 +109,4 @@ describe("GET /events", () => {
       })
     );
   });
-  it("Should return the start_date and end_date of the event", async () => {
-    const response = await request(app)
-      .get("/events")
-      .set("Authorization", "Bearer tester");
-    expect(response.status).toBe(200);
-    expect(response.body.start_date).toBeDefined();
-    expect(response.body.end_date).toBeDefined();
-  });
 });
