@@ -13,6 +13,10 @@ export default class Route extends EventRoute<{
 
   protected async filter(): Promise<boolean> {
     if (!(await super.filter())) return false;
+    if (await this.hasAlreadyAttempted()) {
+      this.setError(403, new OpenapiError("You already attempted this event"));
+      return false;
+    }
     return true;
   }
 
@@ -69,5 +73,20 @@ export default class Route extends EventRoute<{
     }
 
     return attempt;
+  }
+  private async hasAlreadyAttempted() {
+    const event = await this.getEvent();
+    const testerId = this.getTesterId();
+    const hasAttempted = await clickDay.tables.CdAttempts.do()
+      .select()
+      .join(
+        "cd_events_to_attempts",
+        "cd_attempts.id",
+        "cd_events_to_attempts.attempt_id"
+      )
+      .where("cd_events_to_attempts.event_id", event.id)
+      .andWhere("cd_attempts.tester_id", testerId);
+    if (hasAttempted.length > 0) return true;
+    return false;
   }
 }

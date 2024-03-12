@@ -138,7 +138,7 @@ describe("POST /events/{id}/attempt", () => {
   expired.setDate(expired.getDate() - 10);
   startAfter.setDate(startAfter.getDate() - 1);
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await clickDay.tables.CdEvents.do().insert({
       ...event_1,
       title: "Event available 1",
@@ -162,7 +162,7 @@ describe("POST /events/{id}/attempt", () => {
     }
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await clickDay.tables.CdEvents.do().delete();
     await clickDay.tables.CdAttempts.do().delete();
     await clickDay.tables.CdEventsToAttempts.do().delete();
@@ -347,5 +347,29 @@ describe("POST /events/{id}/attempt", () => {
       .set("Authorization", "Bearer tester");
 
     expect(response.status).toBe(400);
+  });
+  it("Should answer 403 if the user has already attempted the event", async () => {
+    await clickDay.tables.CdAttempts.do().insert({
+      agency_code: attempt_1.agency_code,
+      tester_id: 1,
+      start_time: start.toISOString(),
+    });
+    const attempt = await clickDay.tables.CdAttempts.do()
+      .select("id", "start_time")
+      .where({
+        agency_code: attempt_1.agency_code,
+        tester_id: 1,
+      })
+      .orderBy("id", "desc")
+      .first();
+    await clickDay.tables.CdEventsToAttempts.do().insert({
+      event_id: event_1.id,
+      attempt_id: attempt?.id,
+      is_blueprint: 0,
+    });
+    const response = await request(app)
+      .post(`/events/${event_1.id}/attempt`)
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(403);
   });
 });
