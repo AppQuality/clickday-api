@@ -1,6 +1,9 @@
 import { clickDay } from "@src/features/database";
 
-export default class Question<T extends string, K extends "text" | "dropdown"> {
+export default class Question<
+  T extends string,
+  K extends "text" | "dropdown" | "radio"
+> {
   private correct: string;
 
   constructor(
