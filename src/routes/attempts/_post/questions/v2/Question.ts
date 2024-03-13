@@ -1,6 +1,6 @@
 import { clickDay } from "@src/features/database";
 
-export default class QuestionV2<
+export default class Question<
   T extends string,
   K extends "text" | "dropdown" | "radio"
 > {
