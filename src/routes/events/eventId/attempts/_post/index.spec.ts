@@ -353,6 +353,8 @@ describe("POST /events/{id}/attempt", () => {
       agency_code: attempt_1.agency_code,
       tester_id: 1,
       start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      submissions: 1,
     });
     const attempt = await clickDay.tables.CdAttempts.do()
       .select("id", "start_time")
