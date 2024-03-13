@@ -20,12 +20,14 @@ export default class Route extends UserRoute<{
   private start_date: StoplightOperations["post-events"]["requestBody"]["content"]["application/json"]["start_date"];
   private end_date: StoplightOperations["post-events"]["requestBody"]["content"]["application/json"]["end_date"];
   private code: string;
+  private version?: StoplightOperations["post-events"]["requestBody"]["content"]["application/json"]["version"];
 
   constructor(configuration: RouteClassConfiguration) {
     super(configuration);
     this.title = this.getBody().title;
     this.start_date = this.getBody().start_date;
     this.end_date = this.getBody().end_date;
+    this.version = this.getBody().version;
     this.code = this.generateCode();
   }
 
@@ -57,16 +59,15 @@ export default class Route extends UserRoute<{
     const event = await this.createEvent();
     const attempt_id = await this.createAttempt();
     await this.assignEventToAttempt(attempt_id, event.id);
-    await this.generateEmailQuestion(attempt_id);
-    await this.generateVocalsOfMonthQuestion(attempt_id);
-    const { question: bando, correct: correctBando } =
-      await this.generateBandoQuestion(attempt_id);
-    await this.generateLastBandoNumbersQuestion(attempt_id, correctBando);
-    await this.generateAmountOfBandoQuestion(attempt_id);
-    await this.generateAxisQuestion(attempt_id);
-    await this.generateMomentDateQuestion(attempt_id);
-    await this.generateDateQuestion(attempt_id);
-    await this.generateCodeQuestion(attempt_id);
+
+    switch (this.version) {
+      case 1:
+        await this.generateV1Questions(attempt_id);
+        break;
+      default:
+        await this.generateV1Questions(attempt_id);
+        break;
+    }
 
     this.setSuccess(200, {
       id: event.id,
@@ -195,4 +196,18 @@ export default class Route extends UserRoute<{
     const regex5Digits = new RegExp(/\d{5,}/);
     return regex5Digits.test(subject);
   };
+
+  private async generateV1Questions(attempt_id: number) {
+    await this.generateEmailQuestion(attempt_id);
+    await this.generateVocalsOfMonthQuestion(attempt_id);
+    const { correct: correctBando } = await this.generateBandoQuestion(
+      attempt_id
+    );
+    await this.generateLastBandoNumbersQuestion(attempt_id, correctBando);
+    await this.generateAmountOfBandoQuestion(attempt_id);
+    await this.generateAxisQuestion(attempt_id);
+    await this.generateMomentDateQuestion(attempt_id);
+    await this.generateDateQuestion(attempt_id);
+    await this.generateCodeQuestion(attempt_id);
+  }
 }

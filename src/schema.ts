@@ -252,6 +252,7 @@ export interface operations {
           title: string;
           start_date: string;
           end_date: string;
+          version?: number;
         };
       };
     };
