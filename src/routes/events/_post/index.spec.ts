@@ -306,8 +306,16 @@ describe("POST /events", () => {
       .select()
       .where("attempt_id", eventToAttempt[0].attempt_id);
 
-    const expectedSlugs = ["bando-v2"];
+    const expectedSlugs = [
+      "bando-v2",
+      "code-no-symbol-v2",
+      "bando-ente-v2",
+      "bando-amount-v2",
+      "minutes-moment-v2",
+      "site-url-v2",
+    ];
     for (const question of questions) {
+      console.log(question.title, question.type, question.input_type);
       expect(expectedSlugs).toContain(question.type);
     }
   });

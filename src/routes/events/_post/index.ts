@@ -2,16 +2,21 @@
 import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
-import BandoAmountQuestion from "@src/routes/attempts/_post/questions/v1/BandoAmountQuestion";
-import BandoAxisQuestion from "@src/routes/attempts/_post/questions/v1/BandoAxisQuestion";
-import BandoNumbersQuestion from "@src/routes/attempts/_post/questions/v1/BandoNumbersQuestion";
-import BandoQuestion from "@src/routes/attempts/_post/questions/v1/BandoQuestion";
-import CharacterQuestion from "@src/routes/attempts/_post/questions/v1/CharactersQuestion";
-import DateQuestion from "@src/routes/attempts/_post/questions/v1/DateQuestion";
-import EmailQuestion from "@src/routes/attempts/_post/questions/v1/EmailQuestion";
-import MomentQuestion from "@src/routes/attempts/_post/questions/v1/MomentQuestion";
-import MonthVocalsQuestion from "@src/routes/attempts/_post/questions/v1/MonthVocalsQuestion";
-import BandoYearQuestion from "@src/routes/attempts/_post/questions/v2/BandoYearQuestion";
+import BandoAmountQuestionV1 from "@src/routes/attempts/_post/questions/v1/BandoAmountQuestion";
+import BandoAxisQuestionV1 from "@src/routes/attempts/_post/questions/v1/BandoAxisQuestion";
+import BandoNumbersQuestionV1 from "@src/routes/attempts/_post/questions/v1/BandoNumbersQuestion";
+import BandoQuestionV1 from "@src/routes/attempts/_post/questions/v1/BandoQuestion";
+import CharacterQuestionV1 from "@src/routes/attempts/_post/questions/v1/CharactersQuestion";
+import DateQuestionV1 from "@src/routes/attempts/_post/questions/v1/DateQuestion";
+import EmailQuestionV1 from "@src/routes/attempts/_post/questions/v1/EmailQuestion";
+import MomentQuestionV1 from "@src/routes/attempts/_post/questions/v1/MomentQuestion";
+import MonthVocalsQuestionV1 from "@src/routes/attempts/_post/questions/v1/MonthVocalsQuestion";
+import BandoEnteQuestionV2 from "@src/routes/attempts/_post/questions/v2/BandoEnteQuestion";
+import BandoYearQuestionV2 from "@src/routes/attempts/_post/questions/v2/BandoYearQuestion";
+import BandoAmountQuestionV2 from "@src/routes/attempts/_post/questions/v2/BandoAmountQuestion";
+import CodeNoSymbolQuestionV2 from "@src/routes/attempts/_post/questions/v2/CodeNoSymbolQuestion";
+import MinutesMomentQuestionV2 from "@src/routes/attempts/_post/questions/v2/MinutesMomentQuestion";
+import SiteUrlQuestionV2 from "@src/routes/attempts/_post/questions/v2/SiteUrlQuestion";
 import { v4 as uuidv4 } from "uuid";
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-events"]["responses"]["200"]["content"]["application/json"];
@@ -103,7 +108,7 @@ export default class Route extends UserRoute<{
   private async createAttempt() {
     const attempt = await clickDay.tables.CdAttempts.do()
       .insert({
-        tester_id: 1,
+        tester_id: 0,
         agency_code: this.code,
       })
       .returning("id");
@@ -126,20 +131,20 @@ export default class Route extends UserRoute<{
     return eventToAttempt;
   }
 
-  private async generateEmailQuestion(attempt_id: number) {
-    const result = new EmailQuestion();
+  private async generateEmailQuestionV1(attempt_id: number) {
+    const result = new EmailQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateVocalsOfMonthQuestion(attempt_id: number) {
-    const result = new MonthVocalsQuestion();
+  private async generateVocalsOfMonthQuestionV1(attempt_id: number) {
+    const result = new MonthVocalsQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateBandoQuestion(attempt_id: number) {
-    const result = new BandoQuestion();
+  private async generateBandoQuestionV1(attempt_id: number) {
+    const result = new BandoQuestionV1();
     await result.insert(attempt_id);
     const correct = result.correctAnswer;
     return {
@@ -157,47 +162,77 @@ export default class Route extends UserRoute<{
     }
   };
 
-  private async generateLastBandoNumbersQuestion(
+  private async generateLastBandoNumbersQuestionV1(
     attempt_id: number,
     bando: string
   ) {
-    const result = new BandoNumbersQuestion(bando);
+    const result = new BandoNumbersQuestionV1(bando);
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateAmountOfBandoQuestion(attempt_id: number) {
-    const result = new BandoAmountQuestion();
+  private async generateAmountOfBandoQuestionV1(attempt_id: number) {
+    const result = new BandoAmountQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateAxisQuestion(attempt_id: number) {
-    const result = new BandoAxisQuestion();
+  private async generateAxisQuestionV1(attempt_id: number) {
+    const result = new BandoAxisQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateMomentDateQuestion(attempt_id: number) {
-    const result = new MomentQuestion();
+  private async generateMomentDateQuestionV1(attempt_id: number) {
+    const result = new MomentQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateDateQuestion(attempt_id: number) {
-    const result = new DateQuestion();
+  private async generateDateQuestionV1(attempt_id: number) {
+    const result = new DateQuestionV1();
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateCodeQuestion(attempt_id: number) {
-    const result = new CharacterQuestion(this.code);
+  private async generateCodeQuestionV1(attempt_id: number) {
+    const result = new CharacterQuestionV1(this.code);
     await result.insert(attempt_id);
     return result.question();
   }
 
-  private async generateBandoYearQuestion(attempt_id: number) {
-    const result = new BandoYearQuestion();
+  private async generateBandoYearQuestionV2(attempt_id: number) {
+    const result = new BandoYearQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateCodeNoSymbolQuestionV2(attempt_id: number) {
+    const result = new CodeNoSymbolQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateBandoEnteQuestionV2(attempt_id: number) {
+    const result = new BandoEnteQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateBandoAmountQuestionV2(attempt_id: number) {
+    const result = new BandoAmountQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateMinutesMomentQuestionV2(attempt_id: number) {
+    const result = new MinutesMomentQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateSiteUrlQuestionV2(attempt_id: number) {
+    const result = new SiteUrlQuestionV2();
     await result.insert(attempt_id);
     return result.question();
   }
@@ -208,20 +243,25 @@ export default class Route extends UserRoute<{
   };
 
   private async generateV1Questions(attempt_id: number) {
-    await this.generateEmailQuestion(attempt_id);
-    await this.generateVocalsOfMonthQuestion(attempt_id);
-    const { correct: correctBando } = await this.generateBandoQuestion(
+    await this.generateEmailQuestionV1(attempt_id);
+    await this.generateVocalsOfMonthQuestionV1(attempt_id);
+    const { correct: correctBando } = await this.generateBandoQuestionV1(
       attempt_id
     );
-    await this.generateLastBandoNumbersQuestion(attempt_id, correctBando);
-    await this.generateAmountOfBandoQuestion(attempt_id);
-    await this.generateAxisQuestion(attempt_id);
-    await this.generateMomentDateQuestion(attempt_id);
-    await this.generateDateQuestion(attempt_id);
-    await this.generateCodeQuestion(attempt_id);
+    await this.generateLastBandoNumbersQuestionV1(attempt_id, correctBando);
+    await this.generateAmountOfBandoQuestionV1(attempt_id);
+    await this.generateAxisQuestionV1(attempt_id);
+    await this.generateMomentDateQuestionV1(attempt_id);
+    await this.generateDateQuestionV1(attempt_id);
+    await this.generateCodeQuestionV1(attempt_id);
   }
 
   private async generateV2Questions(attempt_id: number) {
-    await this.generateBandoYearQuestion(attempt_id);
+    await this.generateBandoYearQuestionV2(attempt_id);
+    await this.generateCodeNoSymbolQuestionV2(attempt_id);
+    await this.generateBandoEnteQuestionV2(attempt_id);
+    await this.generateBandoAmountQuestionV2(attempt_id);
+    await this.generateMinutesMomentQuestionV2(attempt_id);
+    await this.generateSiteUrlQuestionV2(attempt_id);
   }
 }
