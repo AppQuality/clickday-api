@@ -207,4 +207,83 @@ describe("POST /events", () => {
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(403);
   });
+
+  it("Should have the expected slugs for the event attempt questions if event version is 1", async () => {
+    const response = await request(app)
+      .post("/events")
+      .send({
+        title: "Event version 1",
+        start_date: "2021-08-01T00:00:00.000Z",
+        end_date: "2021-09-01T00:00:00.000Z",
+        version: 1,
+      })
+      .set("authorization", "Bearer admin");
+    expect(response.status).toBe(200);
+
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where("event_id", response.body.id);
+    const questions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where("attempt_id", eventToAttempt[0].attempt_id);
+
+    const expectedSlugs = [
+      "email",
+      "month-vocals",
+      "bando",
+      "last-numbers-bando",
+      "amount",
+      "axis",
+      "moment-date",
+      "today",
+      "last-numbers",
+      "yesterday",
+      "first-characters",
+      "first-numbers",
+      "tomorrow",
+      "last-characters",
+    ];
+    for (const question of questions) {
+      expect(expectedSlugs).toContain(question.type);
+    }
+  });
+
+  it("Should have the expected version 1 slugs for the event attempt questions if event version is not set (default 1)", async () => {
+    const response = await request(app)
+      .post("/events")
+      .send({
+        title: "Event version 1",
+        start_date: "2021-08-01T00:00:00.000Z",
+        end_date: "2021-09-01T00:00:00.000Z",
+      })
+      .set("authorization", "Bearer admin");
+    expect(response.status).toBe(200);
+
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where("event_id", response.body.id);
+    const questions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where("attempt_id", eventToAttempt[0].attempt_id);
+
+    const expectedSlugs = [
+      "email",
+      "month-vocals",
+      "bando",
+      "last-numbers-bando",
+      "amount",
+      "axis",
+      "moment-date",
+      "today",
+      "last-numbers",
+      "yesterday",
+      "first-characters",
+      "first-numbers",
+      "tomorrow",
+      "last-characters",
+    ];
+    for (const question of questions) {
+      expect(expectedSlugs).toContain(question.type);
+    }
+  });
 });
