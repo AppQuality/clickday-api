@@ -85,7 +85,9 @@ export default class Route extends EventRoute<{
         "cd_events_to_attempts.attempt_id"
       )
       .where("cd_events_to_attempts.event_id", event.id)
-      .andWhere("cd_attempts.tester_id", testerId);
+      .andWhere("cd_attempts.tester_id", testerId)
+      .whereNotNull("cd_attempts.end_time")
+      .andWhere("cd_attempts.submissions", ">", 0);
     if (hasAttempted.length > 0) return true;
     return false;
   }
