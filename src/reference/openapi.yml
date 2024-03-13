@@ -396,6 +396,10 @@ paths:
                   type: string
                 end_date:
                   type: string
+                version:
+                  type: integer
+                  x-stoplight:
+                    id: m6xdf3uzspfws
       description: ''
       security:
         - JWT: []
