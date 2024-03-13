@@ -1,4 +1,4 @@
-import TextQuestion from "./TextQuestion";
+import TextQuestion from "../TextQuestion";
 
 export default class DateQuestion extends TextQuestion<
   "yesterday" | "today" | "tomorrow"

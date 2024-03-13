@@ -2,15 +2,15 @@
 import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
-import BandoAmountQuestion from "@src/routes/attempts/_post/questions/BandoAmountQuestion";
-import BandoAxisQuestion from "@src/routes/attempts/_post/questions/BandoAxisQuestion";
-import BandoNumbersQuestion from "@src/routes/attempts/_post/questions/BandoNumbersQuestion";
-import BandoQuestion from "@src/routes/attempts/_post/questions/BandoQuestion";
-import CharacterQuestion from "@src/routes/attempts/_post/questions/CharactersQuestion";
-import DateQuestion from "@src/routes/attempts/_post/questions/DateQuestion";
-import EmailQuestion from "@src/routes/attempts/_post/questions/EmailQuestion";
-import MomentQuestion from "@src/routes/attempts/_post/questions/MomentQuestion";
-import MonthVocalsQuestion from "@src/routes/attempts/_post/questions/MonthVocalsQuestion";
+import BandoAmountQuestion from "@src/routes/attempts/_post/questions/v1/BandoAmountQuestion";
+import BandoAxisQuestion from "@src/routes/attempts/_post/questions/v1/BandoAxisQuestion";
+import BandoNumbersQuestion from "@src/routes/attempts/_post/questions/v1/BandoNumbersQuestion";
+import BandoQuestion from "@src/routes/attempts/_post/questions/v1/BandoQuestion";
+import CharacterQuestion from "@src/routes/attempts/_post/questions/v1/CharactersQuestion";
+import DateQuestion from "@src/routes/attempts/_post/questions/v1/DateQuestion";
+import EmailQuestion from "@src/routes/attempts/_post/questions/v1/EmailQuestion";
+import MomentQuestion from "@src/routes/attempts/_post/questions/v1/MomentQuestion";
+import MonthVocalsQuestion from "@src/routes/attempts/_post/questions/v1/MonthVocalsQuestion";
 import { v4 as uuidv4 } from "uuid";
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-events"]["responses"]["200"]["content"]["application/json"];

@@ -1,4 +1,4 @@
-import TextQuestion from "./TextQuestion";
+import TextQuestion from "../TextQuestion";
 
 export default class CharacterQuestion extends TextQuestion<
   "first-characters" | "last-characters" | "first-numbers" | "last-numbers"

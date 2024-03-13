@@ -252,7 +252,7 @@ describe("POST /events", () => {
     const response = await request(app)
       .post("/events")
       .send({
-        title: "Event version 1",
+        title: "Event version 1 default",
         start_date: "2021-08-01T00:00:00.000Z",
         end_date: "2021-09-01T00:00:00.000Z",
       })

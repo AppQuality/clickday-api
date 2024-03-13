@@ -2,15 +2,15 @@
 import OpenapiError from "@src/features/OpenapiError";
 import { clickDay } from "@src/features/database";
 import UserRoute from "@src/features/routes/UserRoute";
-import BandoAmountQuestion from "./questions/BandoAmountQuestion";
-import BandoAxisQuestion from "./questions/BandoAxisQuestion";
-import BandoNumbersQuestion from "./questions/BandoNumbersQuestion";
-import BandoQuestion from "./questions/BandoQuestion";
-import CharacterQuestion from "./questions/CharactersQuestion";
-import DateQuestion from "./questions/DateQuestion";
-import EmailQuestion from "./questions/EmailQuestion";
-import MomentQuestion from "./questions/MomentQuestion";
-import MonthVocalsQuestion from "./questions/MonthVocalsQuestion";
+import BandoAmountQuestion from "./questions/v1/BandoAmountQuestion";
+import BandoAxisQuestion from "./questions/v1/BandoAxisQuestion";
+import BandoNumbersQuestion from "./questions/v1/BandoNumbersQuestion";
+import BandoQuestion from "./questions/v1/BandoQuestion";
+import CharacterQuestion from "./questions/v1/CharactersQuestion";
+import DateQuestion from "./questions/v1/DateQuestion";
+import EmailQuestion from "./questions/v1/EmailQuestion";
+import MomentQuestion from "./questions/v1/MomentQuestion";
+import MonthVocalsQuestion from "./questions/v1/MonthVocalsQuestion";
 
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-attempts"]["responses"]["200"]["content"]["application/json"];
