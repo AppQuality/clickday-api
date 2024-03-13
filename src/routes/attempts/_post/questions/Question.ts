@@ -23,7 +23,7 @@ export default class Question<T extends string, K extends "text" | "dropdown"> {
       type: this.slug,
       correct_answer: this.correct,
       input_type: this.type,
-      title: this.title,
+      title: `${this.title}${this.showAnswer() ? ` (${this.correct})` : ""}`,
       options: this.options ? this.options.join(",") : undefined,
     });
   }
