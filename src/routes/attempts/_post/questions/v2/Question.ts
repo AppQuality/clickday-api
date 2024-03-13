@@ -1,6 +1,6 @@
 import { clickDay } from "@src/features/database";
 
-export default class Question<
+export default class QuestionV2<
   T extends string,
   K extends "text" | "dropdown" | "radio"
 > {
@@ -26,7 +26,9 @@ export default class Question<
       type: this.slug,
       correct_answer: this.correct,
       input_type: this.type,
-      title: `${this.title}${this.showAnswer() ? ` (${this.correct})` : ""}`,
+      title: `${
+        this.showAnswer() ? `Selezionare ${this.correct}, ${this.title}` : ""
+      }`,
       options: this.options ? this.options.join(",") : undefined,
     });
   }

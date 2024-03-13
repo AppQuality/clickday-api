@@ -11,6 +11,7 @@ import DateQuestion from "@src/routes/attempts/_post/questions/v1/DateQuestion";
 import EmailQuestion from "@src/routes/attempts/_post/questions/v1/EmailQuestion";
 import MomentQuestion from "@src/routes/attempts/_post/questions/v1/MomentQuestion";
 import MonthVocalsQuestion from "@src/routes/attempts/_post/questions/v1/MonthVocalsQuestion";
+import BandoYearQuestion from "@src/routes/attempts/_post/questions/v2/BandoYearQuestion";
 import { v4 as uuidv4 } from "uuid";
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-events"]["responses"]["200"]["content"]["application/json"];
@@ -63,6 +64,9 @@ export default class Route extends UserRoute<{
     switch (this.version) {
       case 1:
         await this.generateV1Questions(attempt_id);
+        break;
+      case 2:
+        await this.generateV2Questions(attempt_id);
         break;
       default:
         await this.generateV1Questions(attempt_id);
@@ -192,6 +196,12 @@ export default class Route extends UserRoute<{
     return result.question();
   }
 
+  private async generateBandoYearQuestion(attempt_id: number) {
+    const result = new BandoYearQuestion();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
   private isThereAtleastFiveDigits = (subject: string): boolean => {
     const regex5Digits = new RegExp(/\d{5,}/);
     return regex5Digits.test(subject);
@@ -209,5 +219,9 @@ export default class Route extends UserRoute<{
     await this.generateMomentDateQuestion(attempt_id);
     await this.generateDateQuestion(attempt_id);
     await this.generateCodeQuestion(attempt_id);
+  }
+
+  private async generateV2Questions(attempt_id: number) {
+    await this.generateBandoYearQuestion(attempt_id);
   }
 }

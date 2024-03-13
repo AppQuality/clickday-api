@@ -1,4 +1,4 @@
-import DropdownQuestion from "../DropdownQuestion";
+import DropdownQuestion from "./DropdownQuestion";
 
 export default class BandoQuestion extends DropdownQuestion<"bando"> {
   constructor() {

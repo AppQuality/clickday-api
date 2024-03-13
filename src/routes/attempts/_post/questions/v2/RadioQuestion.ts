@@ -1,6 +1,6 @@
-import Question from "./Question";
+import QuestionV2 from "./Question";
 
-export default class RadioQuestion<T extends string> extends Question<
+export default class RadioQuestion<T extends string> extends QuestionV2<
   T,
   "radio"
 > {

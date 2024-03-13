@@ -286,4 +286,29 @@ describe("POST /events", () => {
       expect(expectedSlugs).toContain(question.type);
     }
   });
+
+  it("Should have the expected slugs for the event attempt questions if event version is 2", async () => {
+    const response = await request(app)
+      .post("/events")
+      .send({
+        title: "Event version 2",
+        start_date: "2021-08-01T00:00:00.000Z",
+        end_date: "2021-09-01T00:00:00.000Z",
+        version: 2,
+      })
+      .set("authorization", "Bearer admin");
+    expect(response.status).toBe(200);
+
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where("event_id", response.body.id);
+    const questions = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where("attempt_id", eventToAttempt[0].attempt_id);
+
+    const expectedSlugs = ["bando-v2"];
+    for (const question of questions) {
+      expect(expectedSlugs).toContain(question.type);
+    }
+  });
 });
