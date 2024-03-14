@@ -17,6 +17,7 @@ import BandoAmountQuestionV2 from "@src/routes/attempts/_post/questions/v2/Bando
 import CodeNoSymbolQuestionV2 from "@src/routes/attempts/_post/questions/v2/CodeNoSymbolQuestion";
 import MinutesMomentQuestionV2 from "@src/routes/attempts/_post/questions/v2/MinutesMomentQuestion";
 import SiteUrlQuestionV2 from "@src/routes/attempts/_post/questions/v2/SiteUrlQuestion";
+import CodeSymbolQuestionV2 from "@src/routes/attempts/_post/questions/v2/CodeSymbolQuestion";
 import { v4 as uuidv4 } from "uuid";
 export default class Route extends UserRoute<{
   response: StoplightOperations["post-events"]["responses"]["200"]["content"]["application/json"];
@@ -155,12 +156,19 @@ export default class Route extends UserRoute<{
 
   private generateCode = (): string => {
     let newId = uuidv4().split("-").concat(uuidv4().split("-")).join("");
+    newId = this.generateRandomSymbol() + newId.slice(1);
     if (this.isThereAtleastFiveDigits(newId)) {
       return newId;
     } else {
       return this.generateCode();
     }
   };
+
+  private generateRandomSymbol(): string {
+    const symbols = "!@#$%^&*()_-+=[]{}<>?";
+    const randomIndex = Math.floor(Math.random() * symbols.length);
+    return symbols.charAt(randomIndex);
+  }
 
   private async generateLastBandoNumbersQuestionV1(
     attempt_id: number,
@@ -208,7 +216,7 @@ export default class Route extends UserRoute<{
   }
 
   private async generateCodeNoSymbolQuestionV2(attempt_id: number) {
-    const result = new CodeNoSymbolQuestionV2();
+    const result = new CodeNoSymbolQuestionV2(this.code);
     await result.insert(attempt_id);
     return result.question();
   }
@@ -233,6 +241,12 @@ export default class Route extends UserRoute<{
 
   private async generateSiteUrlQuestionV2(attempt_id: number) {
     const result = new SiteUrlQuestionV2();
+    await result.insert(attempt_id);
+    return result.question();
+  }
+
+  private async generateCodeSymbolQuestionV2(attempt_id: number) {
+    const result = new CodeSymbolQuestionV2(this.code);
     await result.insert(attempt_id);
     return result.question();
   }
@@ -263,5 +277,6 @@ export default class Route extends UserRoute<{
     await this.generateBandoAmountQuestionV2(attempt_id);
     await this.generateMinutesMomentQuestionV2(attempt_id);
     await this.generateSiteUrlQuestionV2(attempt_id);
+    await this.generateCodeSymbolQuestionV2(attempt_id);
   }
 }

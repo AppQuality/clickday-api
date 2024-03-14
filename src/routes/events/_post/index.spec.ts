@@ -313,6 +313,7 @@ describe("POST /events", () => {
       "bando-amount-v2",
       "minutes-moment-v2",
       "site-url-v2",
+      "code-symbol-v2",
     ];
     for (const question of questions) {
       console.log(question.title, question.type, question.input_type);
