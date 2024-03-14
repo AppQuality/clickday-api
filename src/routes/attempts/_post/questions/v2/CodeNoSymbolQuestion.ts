@@ -1,7 +1,7 @@
 import DropdownQuestion from "./DropdownQuestion";
 
 export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symbol-v2"> {
-  private static currentOptions = [
+  public static currentOptions = [
     "%cb92246a-0634-4b94-8473-a8503bee1962NonSelezionareQuestoToken0101",
     "(78d636ec-0737-45c6-8868-b1fbNonSelezionareQuestoToken01010836478b",
     ")7028b564-8a61-4a7NonSelezionareQuestoToken01011-995e-ec63607479df",
@@ -10,7 +10,7 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symb
     "?NonSelezionareQuestoToken01010b34aeb9-24be-49fb-9c05-727d7ef74d36",
     "!1cf6999f-1364-4ace-b2a0NonSelezionareQuestoToken0101-377989e72b62",
   ];
-  private static correctIndex = Math.floor(
+  public static correctIndex = Math.floor(
     Math.random() * CodeNoSymbolQuestion.currentOptions.length
   );
 
