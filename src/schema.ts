@@ -48,8 +48,24 @@ export interface paths {
 
 export interface components {
   schemas: {
-    SelectQuestionSlug: string;
-    TextQuestionSlug: string;
+    /** SelectQuestionSlug */
+    SelectQuestionSlug:
+      | ("email" | "bando" | "last-numbers-bando")
+      | ("month-vocals" | "amount" | "axis")
+      | "moment-date"
+      | (
+          | "bando-ente-v2"
+          | "code-no-symbol-v2"
+          | "code-symbol-v2"
+          | "minutes-moment-v2"
+        );
+    /** TextQuestionSlug */
+    TextQuestionSlug:
+      | ("today" | "tomorrow" | "yesterday")
+      | ("first-characters" | "first-numbers")
+      | ("last-characters" | "last-numbers");
+    /** RadioQuestionSlug */
+    RadioQuestionSlug: "bando-amount-v2" | "bando-v2" | "site-url-v2";
     /** Event */
     Event: {
       id: number;
@@ -276,14 +292,20 @@ export interface operations {
             } & (
               | {
                   /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
                   type: "dropdown";
                   options: string[];
                   slug: components["schemas"]["SelectQuestionSlug"];
                 }
               | {
                   /** @enum {string} */
-                  type: "text";
-                  slug: components["schemas"]["TextQuestionSlug"];
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
                 }
             ))[];
           };
