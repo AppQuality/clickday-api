@@ -54,10 +54,13 @@ export interface components {
       | ("month-vocals" | "amount" | "axis")
       | "moment-date"
       | (
-          | "bando-ente-v2"
+          | "bando-v2"
           | "code-no-symbol-v2"
-          | "code-symbol-v2"
+          | "bando-ente-v2"
+          | "bando-amount-v2"
           | "minutes-moment-v2"
+          | "site-url-v2"
+          | "code-symbol-v2"
         );
     /** TextQuestionSlug */
     TextQuestionSlug:
