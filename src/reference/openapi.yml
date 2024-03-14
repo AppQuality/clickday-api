@@ -298,6 +298,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - elapsedTime
+                  - success
                 properties:
                   elapsedTime:
                     type: integer
@@ -307,22 +310,20 @@ paths:
                     type: array
                     items:
                       type: object
+                      required:
+                        - slug
+                        - yourAnswer
+                        - correctAnswer
                       properties:
                         slug:
                           oneOf:
                             - $ref: '#/components/schemas/SelectQuestionSlug'
                             - $ref: '#/components/schemas/TextQuestionSlug'
+                            - $ref: '#/components/schemas/RadioQuestionSlug'
                         yourAnswer:
                           type: string
                         correctAnswer:
                           type: string
-                      required:
-                        - slug
-                        - yourAnswer
-                        - correctAnswer
-                required:
-                  - elapsedTime
-                  - success
               examples:
                 Example 1:
                   value:
