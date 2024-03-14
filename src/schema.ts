@@ -48,26 +48,41 @@ export interface paths {
 
 export interface components {
   schemas: {
-    /** SelectQuestionSlug */
+    /**
+     * SelectQuestionSlug
+     * @enum {undefined}
+     */
     SelectQuestionSlug:
-      | ("email" | "bando" | "last-numbers-bando")
-      | ("month-vocals" | "amount" | "axis")
+      | "email"
+      | "bando"
+      | "last-numbers-bando"
+      | "month-vocals"
+      | "amount"
+      | "axis"
       | "moment-date"
-      | (
-          | "bando-v2"
-          | "code-no-symbol-v2"
-          | "bando-ente-v2"
-          | "bando-amount-v2"
-          | "minutes-moment-v2"
-          | "site-url-v2"
-          | "code-symbol-v2"
-        );
-    /** TextQuestionSlug */
+      | "bando-v2"
+      | "code-no-symbol-v2"
+      | "bando-ente-v2"
+      | "bando-amount-v2"
+      | "minutes-moment-v2"
+      | "site-url-v2"
+      | "code-symbol-v2";
+    /**
+     * TextQuestionSlug
+     * @enum {undefined}
+     */
     TextQuestionSlug:
-      | ("today" | "tomorrow" | "yesterday")
-      | ("first-characters" | "first-numbers")
-      | ("last-characters" | "last-numbers");
-    /** RadioQuestionSlug */
+      | "today"
+      | "tomorrow"
+      | "yesterday"
+      | "first-characters"
+      | "first-numbers"
+      | "last-characters"
+      | "last-numbers";
+    /**
+     * RadioQuestionSlug
+     * @enum {undefined}
+     */
     RadioQuestionSlug: "bando-amount-v2" | "bando-v2" | "site-url-v2";
     /** Event */
     Event: {
