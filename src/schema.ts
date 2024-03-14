@@ -237,7 +237,8 @@ export interface operations {
         "application/json": {
           slug:
             | components["schemas"]["SelectQuestionSlug"]
-            | components["schemas"]["TextQuestionSlug"];
+            | components["schemas"]["TextQuestionSlug"]
+            | components["schemas"]["RadioQuestionSlug"];
           answer: string;
         }[];
       };
