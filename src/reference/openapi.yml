@@ -418,9 +418,18 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - id
+                  - code
+                  - startTime
+                  - questions
                 properties:
                   id:
                     type: integer
+                  code:
+                    type: string
+                    x-stoplight:
+                      id: ojs2plig2pkyx
                   startTime:
                     type: string
                     format: date-time
@@ -428,57 +437,16 @@ paths:
                     type: array
                     items:
                       allOf:
-                        - properties:
-                            title:
-                              type: string
+                        - type: object
                           required:
                             - title
+                          properties:
+                            title:
+                              type: string
                         - oneOf:
-                            - properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - text
-                                slug:
-                                  $ref: '#/components/schemas/TextQuestionSlug'
-                              required:
-                                - type
-                                - slug
-                            - properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - dropdown
-                                options:
-                                  type: array
-                                  items:
-                                    type: string
-                                slug:
-                                  $ref: '#/components/schemas/SelectQuestionSlug'
-                              required:
-                                - type
-                                - options
-                                - slug
-                            - properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - radio
-                                options:
-                                  type: array
-                                  items:
-                                    type: string
-                                slug:
-                                  $ref: '#/components/schemas/RadioQuestionSlug'
-                              required:
-                                - type
-                                - options
-                                - slug
-                      type: object
-                required:
-                  - id
-                  - startTime
-                  - questions
+                            - {}
+                            - {}
+                            - {}
               examples:
                 Example 1:
                   value:
