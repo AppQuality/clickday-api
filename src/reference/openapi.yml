@@ -492,49 +492,37 @@ components:
   schemas:
     SelectQuestionSlug:
       title: SelectQuestionSlug
-      oneOf:
-        - enum:
-            - email
-            - bando
-            - last-numbers-bando
-        - enum:
-            - month-vocals
-            - amount
-            - axis
-          type: string
-        - enum:
-            - moment-date
-          type: string
-        - enum:
-            - bando-v2
-            - code-no-symbol-v2
-            - bando-ente-v2
-            - bando-amount-v2
-            - minutes-moment-v2
-            - site-url-v2
-            - code-symbol-v2
-      x-examples: {}
+      enum:
+        - email
+        - bando
+        - last-numbers-bando
+        - month-vocals
+        - amount
+        - axis
+        - moment-date
+        - bando-v2
+        - code-no-symbol-v2
+        - bando-ente-v2
+        - bando-amount-v2
+        - minutes-moment-v2
+        - site-url-v2
+        - code-symbol-v2
     TextQuestionSlug:
       title: TextQuestionSlug
-      oneOf:
-        - enum:
-            - today
-            - tomorrow
-            - yesterday
-        - enum:
-            - first-characters
-            - first-numbers
-        - enum:
-            - last-characters
-            - last-numbers
-      x-examples: {}
+      enum:
+        - today
+        - tomorrow
+        - yesterday
+        - first-characters
+        - first-numbers
+        - last-characters
+        - last-numbers
     RadioQuestionSlug:
       title: RadioQuestionSlug
-      oneOf:
-        - enum:
-            - bando-amount-v2
-            - bando-v2
-            - site-url-v2
+      enum:
+        - bando-amount-v2
+        - bando-v2
+        - site-url-v2
     Event:
       title: Event
       type: object
