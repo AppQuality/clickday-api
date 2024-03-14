@@ -1,6 +1,5 @@
 import app from "@src/app";
 import { clickDay } from "@src/features/database";
-import e from "cors";
 import request from "supertest";
 
 const event_1 = {
