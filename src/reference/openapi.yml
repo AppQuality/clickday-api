@@ -131,6 +131,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - id
+                  - startTime
+                  - questions
                 properties:
                   id:
                     type: integer
@@ -141,13 +145,17 @@ paths:
                     type: array
                     items:
                       allOf:
-                        - properties:
+                        - required:
+                            - title
+                          properties:
                             title:
                               type: string
-                          required:
-                            - title
                         - oneOf:
-                            - properties:
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
                                 type:
                                   type: string
                                   enum:
@@ -158,25 +166,17 @@ paths:
                                     type: string
                                 slug:
                                   $ref: '#/components/schemas/SelectQuestionSlug'
-                              required:
+                            - required:
                                 - type
-                                - options
                                 - slug
-                            - properties:
+                              properties:
                                 type:
                                   type: string
                                   enum:
                                     - text
                                 slug:
                                   $ref: '#/components/schemas/TextQuestionSlug'
-                              required:
-                                - type
-                                - slug
                       type: object
-                required:
-                  - id
-                  - startTime
-                  - questions
               examples:
                 Example 1:
                   value:
@@ -437,16 +437,53 @@ paths:
                     type: array
                     items:
                       allOf:
-                        - type: object
-                          required:
+                        - required:
                             - title
                           properties:
                             title:
                               type: string
                         - oneOf:
-                            - {}
-                            - {}
-                            - {}
+                            - required:
+                                - type
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - text
+                                slug:
+                                  $ref: '#/components/schemas/TextQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - dropdown
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                      type: object
               examples: {}
       operationId: post-events-id-attempt
       security:
