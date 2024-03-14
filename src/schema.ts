@@ -285,6 +285,7 @@ export interface operations {
         content: {
           "application/json": {
             id: number;
+            code: string;
             /** Format: date-time */
             startTime: string;
             questions: ({

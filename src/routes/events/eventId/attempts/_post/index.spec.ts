@@ -224,12 +224,17 @@ describe("POST /events/{id}/attempt", () => {
       .select()
       .where({ event_id: event_1.id, is_blueprint: 1 })
       .first();
+    const attempt = await clickDay.tables.CdAttempts.do()
+      .select()
+      .where({ id: eventAttempt?.attempt_id })
+      .first();
     const eventAttemptQuestions = await clickDay.tables.CdAttemptsQuestions.do()
       .select()
       .where({ attempt_id: eventAttempt?.attempt_id });
     expect(response.body).toEqual(
       expect.objectContaining({
         startTime: start.toISOString(),
+        code: attempt?.agency_code,
         questions: eventAttemptQuestions.map((question) => {
           if (question.input_type === "dropdown") {
             return {

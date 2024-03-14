@@ -26,6 +26,7 @@ export default class Route extends EventRoute<{
 
     this.setSuccess(200, {
       id: attempt.id,
+      code: attempt.agency_code,
       startTime: new Date(attempt.start_time).toISOString(),
       questions,
     });
@@ -42,7 +43,7 @@ export default class Route extends EventRoute<{
     });
 
     const attempt = await clickDay.tables.CdAttempts.do()
-      .select("id", "start_time")
+      .select("id", "start_time", "agency_code")
       .where({
         agency_code: blueprintAttempt.agency_code,
         tester_id: this.getTesterId(),

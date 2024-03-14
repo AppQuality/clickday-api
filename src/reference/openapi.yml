@@ -428,8 +428,6 @@ paths:
                     type: integer
                   code:
                     type: string
-                    x-stoplight:
-                      id: ojs2plig2pkyx
                   startTime:
                     type: string
                     format: date-time
