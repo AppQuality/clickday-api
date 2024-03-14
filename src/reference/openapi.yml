@@ -341,16 +341,17 @@ paths:
               type: array
               items:
                 type: object
+                required:
+                  - slug
+                  - answer
                 properties:
                   slug:
                     oneOf:
                       - $ref: '#/components/schemas/SelectQuestionSlug'
                       - $ref: '#/components/schemas/TextQuestionSlug'
+                      - $ref: '#/components/schemas/RadioQuestionSlug'
                   answer:
                     type: string
-                required:
-                  - slug
-                  - answer
             examples: {}
       tags:
         - Attempts
@@ -441,7 +442,8 @@ paths:
                             title:
                               type: string
                         - oneOf:
-                            - required:
+                            - type: object
+                              required:
                                 - type
                                 - slug
                               properties:
@@ -451,36 +453,8 @@ paths:
                                     - text
                                 slug:
                                   $ref: '#/components/schemas/TextQuestionSlug'
-                            - required:
-                                - type
-                                - options
-                                - slug
-                              properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - dropdown
-                                options:
-                                  type: array
-                                  items:
-                                    type: string
-                                slug:
-                                  $ref: '#/components/schemas/SelectQuestionSlug'
-                            - required:
-                                - type
-                                - options
-                                - slug
-                              properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - radio
-                                options:
-                                  type: array
-                                  items:
-                                    type: string
-                                slug:
-                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                            - {}
+                            - {}
                       type: object
               examples: {}
       operationId: post-events-id-attempt
