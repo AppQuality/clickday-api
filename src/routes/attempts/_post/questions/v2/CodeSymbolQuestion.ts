@@ -1,7 +1,7 @@
 import DropdownQuestion from "./DropdownQuestion";
 
-export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-v2"> {
-  private static currentOptions = [
+export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symbol-v2"> {
+  private static readonly options = [
     "%",
     "@",
     "!",
@@ -10,26 +10,19 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-
     "§",
     "_",
     "/",
-    ".",
     "=",
-    "*",
     "#",
     "$",
     "[",
   ];
-  private static correctIndex = Math.floor(
-    Math.random() * CodeNoSymbolQuestion.currentOptions.length
-  );
 
   constructor(code: string) {
+    CodeNoSymbolQuestion.addOption(code.charAt(0));
     super(
-      "code-symbol-v2",
-      `il primo carattere del codice identificativo`,
-      CodeNoSymbolQuestion.currentOptions.splice(
-        CodeNoSymbolQuestion.correctIndex,
-        0,
-        code.charAt(0)
-      )
+      "code-no-symbol-v2",
+      `il simbolo iniziale del codice identificativo`,
+      CodeNoSymbolQuestion.options,
+      { symbol: code.charAt(0) }
     );
   }
 
@@ -37,9 +30,35 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-
     return 4;
   }
 
-  protected getCorrect(args: Record<string, any> = {}) {
-    return CodeNoSymbolQuestion.currentOptions[
-      CodeNoSymbolQuestion.correctIndex
-    ];
+  protected getCorrect({ symbol }: { symbol: string }) {
+    const correctOption = this.currentOptions.find(
+      (option) => option === symbol
+    );
+    if (!correctOption) {
+      throw new Error("Correct option no symbol not found");
+    }
+    return correctOption;
+  }
+
+  static addOption(symbol: string) {
+    CodeNoSymbolQuestion.options.splice(
+      Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+      0,
+      symbol
+    );
+
+    if (symbol === "+") {
+      CodeNoSymbolQuestion.options.splice(
+        Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+        0,
+        "-"
+      );
+    } else if (symbol === "-") {
+      CodeNoSymbolQuestion.options.splice(
+        Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+        0,
+        "+"
+      );
+    }
   }
 }
