@@ -332,7 +332,6 @@ describe("POST /events/{id}/attempt", () => {
     expect(response.status).toBe(400);
   });
 
-  //
   it("Shouldn't be possibile to create an attempt if the event doesn't exist", async () => {
     const response = await request(app)
       .post(`/events/99999/attempt`)
