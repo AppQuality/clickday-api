@@ -31,11 +31,6 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-
         code.charAt(0)
       )
     );
-    console.log(
-      CodeNoSymbolQuestion.currentOptions,
-      CodeNoSymbolQuestion.correctIndex,
-      this.getCorrect()
-    );
   }
 
   protected minimumOptions(): number {

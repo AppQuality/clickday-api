@@ -165,7 +165,7 @@ export default class Route extends UserRoute<{
   };
 
   private generateRandomSymbol(): string {
-    const symbols = "!@#$%^&*()_-+=[]{}<>?";
+    const symbols = "-+";
     const randomIndex = Math.floor(Math.random() * symbols.length);
     return symbols.charAt(randomIndex);
   }
