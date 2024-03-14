@@ -438,6 +438,16 @@ paths:
                                 type:
                                   type: string
                                   enum:
+                                    - text
+                                slug:
+                                  $ref: '#/components/schemas/TextQuestionSlug'
+                              required:
+                                - type
+                                - slug
+                            - properties:
+                                type:
+                                  type: string
+                                  enum:
                                     - dropdown
                                 options:
                                   type: array
@@ -463,16 +473,6 @@ paths:
                               required:
                                 - type
                                 - options
-                                - slug
-                            - properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - text
-                                slug:
-                                  $ref: '#/components/schemas/TextQuestionSlug'
-                              required:
-                                - type
                                 - slug
                       type: object
                 required:
