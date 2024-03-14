@@ -405,15 +405,19 @@ describe("POST /attempts/:id", () => {
       .where({ attempt_id: attemptStartRequest.body.id });
 
     // search if type is today/tomorrow/yesterday
-    let type = "";
+    let t = "";
     resultTypes.forEach(({ type: resultType }) => {
       if (
         resultType === "today" ||
         resultType === "tomorrow" ||
         resultType === "yesterday"
       )
-        type = resultType;
+        t = resultType;
     });
+
+    if (!t) throw new Error("Type not found");
+
+    const type = t as StoplightComponents["schemas"]["TextQuestionSlug"];
 
     // replace today/tomorrow/yesterday question in body array with current type and wrong answer
     const requestBody = body;
@@ -471,7 +475,7 @@ describe("POST /attempts/:id", () => {
       .where({ attempt_id: attemptStartRequest.body.id });
 
     // search if type is first-characters/last-characters/first-numbers/last-numbers
-    let type = "";
+    let t = "";
     resultTypes.forEach(({ type: resultType }) => {
       if (
         resultType === "first-characters" ||
@@ -479,8 +483,11 @@ describe("POST /attempts/:id", () => {
         resultType === "first-numbers" ||
         resultType === "last-numbers"
       )
-        type = resultType;
+        t = resultType;
     });
+
+    const type = t as StoplightComponents["schemas"]["TextQuestionSlug"];
+
     // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
     const requestBody = body;
     body.find((item, index) => {

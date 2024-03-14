@@ -75,15 +75,24 @@ export default class EventRoute<
         return {
           title: question.title,
           type: question.input_type as "dropdown",
-          slug: question.type,
+          slug: question.type as StoplightComponents["schemas"]["SelectQuestionSlug"],
           options: question.options.split(","),
         };
-      } else {
+      } else if (question.input_type === "text") {
         return {
           title: question.title,
           type: question.input_type as "text",
-          slug: question.type,
+          slug: question.type as StoplightComponents["schemas"]["TextQuestionSlug"],
         };
+      } else if (question.input_type === "radio") {
+        return {
+          title: question.title,
+          type: question.input_type as "radio",
+          slug: question.type as StoplightComponents["schemas"]["RadioQuestionSlug"],
+          options: question.options.split(","),
+        };
+      } else {
+        throw new Error("Invalid question type");
       }
     });
 
