@@ -239,7 +239,8 @@ export interface operations {
             wrongAnswers?: {
               slug:
                 | components["schemas"]["SelectQuestionSlug"]
-                | components["schemas"]["TextQuestionSlug"];
+                | components["schemas"]["TextQuestionSlug"]
+                | components["schemas"]["RadioQuestionSlug"];
               yourAnswer: string;
               correctAnswer: string;
             }[];
