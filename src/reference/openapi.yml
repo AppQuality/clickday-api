@@ -442,8 +442,7 @@ paths:
                             title:
                               type: string
                         - oneOf:
-                            - type: object
-                              required:
+                            - required:
                                 - type
                                 - slug
                               properties:
@@ -453,8 +452,36 @@ paths:
                                     - text
                                 slug:
                                   $ref: '#/components/schemas/TextQuestionSlug'
-                            - {}
-                            - {}
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - dropdown
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/RadioQuestionSlug'
                       type: object
               examples: {}
       operationId: post-events-id-attempt
