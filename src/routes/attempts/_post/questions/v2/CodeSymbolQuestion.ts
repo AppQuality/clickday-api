@@ -1,6 +1,6 @@
 import DropdownQuestion from "./DropdownQuestion";
 
-export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symbol-v2"> {
+export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-v2"> {
   private static readonly options = [
     "%",
     "@",
@@ -19,7 +19,7 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symb
   constructor(code: string) {
     CodeNoSymbolQuestion.addOption(code.charAt(0));
     super(
-      "code-no-symbol-v2",
+      "code-symbol-v2",
       `il simbolo iniziale del codice identificativo`,
       CodeNoSymbolQuestion.options,
       { symbol: code.charAt(0) }
