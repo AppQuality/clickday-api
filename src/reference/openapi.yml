@@ -270,11 +270,15 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - code
               properties:
                 code:
                   type: string
-              required:
-                - code
+                version:
+                  type: integer
+                  x-stoplight:
+                    id: 26420y06qu19m
             examples:
               Example 1:
                 value:
