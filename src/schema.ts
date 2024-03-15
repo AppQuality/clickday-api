@@ -199,6 +199,12 @@ export interface operations {
             } & (
               | {
                   /** @enum {string} */
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
                   type: "dropdown";
                   options: string[];
                   slug: components["schemas"]["SelectQuestionSlug"];
@@ -218,6 +224,7 @@ export interface operations {
       content: {
         "application/json": {
           code: string;
+          version?: number;
         };
       };
     };

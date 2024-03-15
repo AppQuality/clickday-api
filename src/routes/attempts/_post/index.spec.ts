@@ -217,8 +217,6 @@ describe("POST /attempts", () => {
 
     expect(response.body.questions).toBeDefined();
     expect(response.body.questions).toBeInstanceOf(Array);
-    expect(response.body.questions).toHaveLength(9); // Should be 9 questions in total
-
     expect(response.body.questions).toEqual([
       expect.objectContaining({
         slug: "email",
@@ -263,5 +261,91 @@ describe("POST /attempts", () => {
       .first();
     expect(response.status).toBe(200);
     expect(res?.submissions).toBe(0);
+  });
+
+  // Should return the default version 1 questions if no version is sent in body
+  it("Should return the default version 1 questions if no version is sent in body", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123" })
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+    expect(response.body.questions.length).toBeGreaterThanOrEqual(1);
+    const expectedSlugs = [
+      "email",
+      "month-vocals",
+      "bando",
+      "last-numbers-bando",
+      "amount",
+      "axis",
+      "moment-date",
+      "today",
+      "last-numbers",
+      "yesterday",
+      "first-characters",
+      "first-numbers",
+      "tomorrow",
+      "last-characters",
+    ];
+    for (const question of response.body.questions) {
+      expect(expectedSlugs).toContain(question.slug);
+    }
+  });
+
+  // Should return the version 1 questions if version 1 is sent in body
+  it("Should return the version 1 questions if version 1 is sent in body", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123", version: 1 })
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+    expect(response.body.questions.length).toBeGreaterThanOrEqual(1);
+    const expectedSlugs = [
+      "email",
+      "month-vocals",
+      "bando",
+      "last-numbers-bando",
+      "amount",
+      "axis",
+      "moment-date",
+      "today",
+      "last-numbers",
+      "yesterday",
+      "first-characters",
+      "first-numbers",
+      "tomorrow",
+      "last-characters",
+    ];
+    for (const question of response.body.questions) {
+      expect(expectedSlugs).toContain(question.slug);
+    }
+  });
+
+  // Should return the version 1 questions if version 2 is sent in body
+  it("Should return the version 1 questions if version 2 is sent in body", async () => {
+    const response = await request(app)
+      .post("/attempts")
+      .send({ code: "+123", version: 2 })
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+    expect(response.body.questions.length).toBeGreaterThanOrEqual(1);
+    const expectedSlugs = [
+      "bando-v2",
+      "code-no-symbol-v2",
+      "bando-ente-v2",
+      "bando-amount-v2",
+      "minutes-moment-v2",
+      "site-url-v2",
+      "code-symbol-v2",
+    ];
+    for (const question of response.body.questions) {
+      expect(expectedSlugs).toContain(question.slug);
+    }
   });
 });
