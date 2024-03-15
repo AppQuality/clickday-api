@@ -12,19 +12,26 @@ export default class Route extends UserRoute<{
   private attempt_id;
   private allowedSlugs = [
     "email",
+    "month-vocals",
     "bando",
     "last-numbers-bando",
-    "month-vocals",
     "amount",
     "axis",
     "moment-date",
-    "today",
-    "tomorrow",
     "yesterday",
     "first-characters",
-    "last-characters",
-    "first-numbers",
+    "tomorrow",
     "last-numbers",
+    "today",
+    "first-numbers",
+    "last-characters",
+    "bando-v2",
+    "code-no-symbol-v2",
+    "bando-ente-v2",
+    "bando-amount-v2",
+    "minutes-moment-v2",
+    "site-url-v2",
+    "code-symbol-v2",
   ];
 
   private _attempt:
@@ -84,7 +91,6 @@ export default class Route extends UserRoute<{
       return false;
     }
     if (
-      this.answers.length !== 9 ||
       !this.answers.every((a) => typeof a.answer !== undefined) ||
       !this.answers.every((a) => typeof a.slug !== undefined) ||
       !this.answers.every((a) => this.allowedSlugs.includes(a.slug))

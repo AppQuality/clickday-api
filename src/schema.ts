@@ -48,8 +48,39 @@ export interface paths {
 
 export interface components {
   schemas: {
-    SelectQuestionSlug: string;
-    TextQuestionSlug: string;
+    /**
+     * SelectQuestionSlug
+     * @enum {undefined}
+     */
+    SelectQuestionSlug:
+      | "email"
+      | "bando"
+      | "last-numbers-bando"
+      | "month-vocals"
+      | "amount"
+      | "axis"
+      | "moment-date"
+      | "code-no-symbol-v2"
+      | "bando-ente-v2"
+      | "minutes-moment-v2"
+      | "code-symbol-v2";
+    /**
+     * TextQuestionSlug
+     * @enum {undefined}
+     */
+    TextQuestionSlug:
+      | "today"
+      | "tomorrow"
+      | "yesterday"
+      | "first-characters"
+      | "first-numbers"
+      | "last-characters"
+      | "last-numbers";
+    /**
+     * RadioQuestionSlug
+     * @enum {undefined}
+     */
+    RadioQuestionSlug: "bando-amount-v2" | "bando-v2" | "site-url-v2";
     /** Event */
     Event: {
       id: number;
@@ -168,6 +199,12 @@ export interface operations {
             } & (
               | {
                   /** @enum {string} */
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
                   type: "dropdown";
                   options: string[];
                   slug: components["schemas"]["SelectQuestionSlug"];
@@ -187,6 +224,7 @@ export interface operations {
       content: {
         "application/json": {
           code: string;
+          version?: number;
         };
       };
     };
@@ -208,7 +246,8 @@ export interface operations {
             wrongAnswers?: {
               slug:
                 | components["schemas"]["SelectQuestionSlug"]
-                | components["schemas"]["TextQuestionSlug"];
+                | components["schemas"]["TextQuestionSlug"]
+                | components["schemas"]["RadioQuestionSlug"];
               yourAnswer: string;
               correctAnswer: string;
             }[];
@@ -221,7 +260,8 @@ export interface operations {
         "application/json": {
           slug:
             | components["schemas"]["SelectQuestionSlug"]
-            | components["schemas"]["TextQuestionSlug"];
+            | components["schemas"]["TextQuestionSlug"]
+            | components["schemas"]["RadioQuestionSlug"];
           answer: string;
         }[];
       };
@@ -252,6 +292,7 @@ export interface operations {
           title: string;
           start_date: string;
           end_date: string;
+          version?: number;
         };
       };
     };
@@ -268,11 +309,17 @@ export interface operations {
         content: {
           "application/json": {
             id: number;
+            code: string;
             /** Format: date-time */
             startTime: string;
             questions: ({
               title: string;
             } & (
+              | {
+                  /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
               | {
                   /** @enum {string} */
                   type: "dropdown";
@@ -281,8 +328,9 @@ export interface operations {
                 }
               | {
                   /** @enum {string} */
-                  type: "text";
-                  slug: components["schemas"]["TextQuestionSlug"];
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
                 }
             ))[];
           };
