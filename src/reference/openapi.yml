@@ -108,6 +108,7 @@ paths:
                     - date
                     - time
                     - errors
+                    - is_event
                   properties:
                     id:
                       type: integer
