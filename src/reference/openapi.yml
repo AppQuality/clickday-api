@@ -159,6 +159,21 @@ paths:
                                 type:
                                   type: string
                                   enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
                                     - dropdown
                                 options:
                                   type: array
