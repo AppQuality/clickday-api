@@ -40,7 +40,7 @@ const config: {
     password: process.env.DB_PASSWORD || "",
     database: process.env.DB_NAME || "tryber",
   },
-  CROWD_URL: process.env.CROWD_URL || "https://tryber.me/",
+  CROWD_URL: process.env.CROWD_URL || "https://app.tryber.me/",
 };
 
 if (process.env.API_ROOT) {
