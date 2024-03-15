@@ -103,6 +103,11 @@ paths:
                 type: array
                 items:
                   type: object
+                  required:
+                    - id
+                    - date
+                    - time
+                    - errors
                   properties:
                     id:
                       type: integer
@@ -112,11 +117,14 @@ paths:
                       type: string
                     errors:
                       type: number
-                  required:
-                    - id
-                    - date
-                    - time
-                    - errors
+                    is_event:
+                      type: boolean
+                      x-stoplight:
+                        id: r2xzeo91pge54
+                    event_title:
+                      type: string
+                      x-stoplight:
+                        id: m44g7a5faqw4v
       operationId: get-attempts
       security:
         - JWT: []
@@ -151,7 +159,8 @@ paths:
                             title:
                               type: string
                         - oneOf:
-                            - required:
+                            - type: object
+                              required:
                                 - type
                                 - options
                                 - slug
@@ -166,31 +175,8 @@ paths:
                                     type: string
                                 slug:
                                   $ref: '#/components/schemas/RadioQuestionSlug'
-                            - required:
-                                - type
-                                - options
-                                - slug
-                              properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - dropdown
-                                options:
-                                  type: array
-                                  items:
-                                    type: string
-                                slug:
-                                  $ref: '#/components/schemas/SelectQuestionSlug'
-                            - required:
-                                - type
-                                - slug
-                              properties:
-                                type:
-                                  type: string
-                                  enum:
-                                    - text
-                                slug:
-                                  $ref: '#/components/schemas/TextQuestionSlug'
+                            - {}
+                            - {}
                       type: object
               examples:
                 Example 1:
