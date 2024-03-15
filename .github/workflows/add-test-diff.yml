@@ -18,10 +18,15 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
+      - name: Install dependencies
+        run: |
+          echo //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }} > .npmrc
+          yarn --frozen-lockfile
+
       - name: Get target tests
         id: target-branch
         run: |
-          yarn
+          yarn --frozen-lockfile
           TESTS=$(yarn -s test:ls 2>/dev/null)
           echo "tests_before=${TESTS}" >> $GITHUB_OUTPUT
 
@@ -32,7 +37,7 @@ jobs:
       - name: Get current branch tests
         id: current-branch
         run: |
-          yarn
+          yarn --frozen-lockfile
           TESTS=$(yarn -s test:ls 2>/dev/null)
           echo "tests_after=${TESTS}" >> $GITHUB_OUTPUT
 

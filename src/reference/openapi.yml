@@ -131,6 +131,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - id
+                  - startTime
+                  - questions
                 properties:
                   id:
                     type: integer
@@ -141,13 +145,32 @@ paths:
                     type: array
                     items:
                       allOf:
-                        - properties:
+                        - required:
+                            - title
+                          properties:
                             title:
                               type: string
-                          required:
-                            - title
                         - oneOf:
-                            - properties:
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
                                 type:
                                   type: string
                                   enum:
@@ -158,25 +181,17 @@ paths:
                                     type: string
                                 slug:
                                   $ref: '#/components/schemas/SelectQuestionSlug'
-                              required:
+                            - required:
                                 - type
-                                - options
                                 - slug
-                            - properties:
+                              properties:
                                 type:
                                   type: string
                                   enum:
                                     - text
                                 slug:
                                   $ref: '#/components/schemas/TextQuestionSlug'
-                              required:
-                                - type
-                                - slug
                       type: object
-                required:
-                  - id
-                  - startTime
-                  - questions
               examples:
                 Example 1:
                   value:
@@ -270,11 +285,13 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - code
               properties:
                 code:
                   type: string
-              required:
-                - code
+                version:
+                  type: integer
             examples:
               Example 1:
                 value:
@@ -298,6 +315,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - elapsedTime
+                  - success
                 properties:
                   elapsedTime:
                     type: integer
@@ -307,26 +327,24 @@ paths:
                     type: array
                     items:
                       type: object
+                      required:
+                        - slug
+                        - yourAnswer
+                        - correctAnswer
                       properties:
                         slug:
                           oneOf:
                             - $ref: '#/components/schemas/SelectQuestionSlug'
                             - $ref: '#/components/schemas/TextQuestionSlug'
+                            - $ref: '#/components/schemas/RadioQuestionSlug'
                         yourAnswer:
                           type: string
                         correctAnswer:
                           type: string
-                      required:
-                        - slug
-                        - yourAnswer
-                        - correctAnswer
-                required:
-                  - elapsedTime
-                  - success
               examples:
                 Example 1:
                   value:
-                    elapsedTime: '1200'
+                    elapsedTime: 1200
                     success: false
                     wrongAnswers:
                       - slug: email
@@ -341,50 +359,196 @@ paths:
               type: array
               items:
                 type: object
+                required:
+                  - slug
+                  - answer
                 properties:
                   slug:
                     oneOf:
                       - $ref: '#/components/schemas/SelectQuestionSlug'
                       - $ref: '#/components/schemas/TextQuestionSlug'
+                      - $ref: '#/components/schemas/RadioQuestionSlug'
                   answer:
                     type: string
-                required:
-                  - slug
-                  - answer
             examples: {}
       tags:
         - Attempts
       description: Complete an attempt with a list of answers
+  /events:
+    get:
+      summary: Get incoming event
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      operationId: get-events
+      security:
+        - JWT: []
+    post:
+      summary: Create an event
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      operationId: post-events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - start_date
+                - end_date
+              properties:
+                title:
+                  type: string
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+                version:
+                  type: integer
+      description: ''
+      security:
+        - JWT: []
+  '/events/{id}/attempt':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Start an event attempt
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - code
+                  - startTime
+                  - questions
+                properties:
+                  id:
+                    type: integer
+                  code:
+                    type: string
+                  startTime:
+                    type: string
+                    format: date-time
+                  questions:
+                    type: array
+                    items:
+                      allOf:
+                        - required:
+                            - title
+                          properties:
+                            title:
+                              type: string
+                        - oneOf:
+                            - required:
+                                - type
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - text
+                                slug:
+                                  $ref: '#/components/schemas/TextQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - dropdown
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                      type: object
+              examples: {}
+      operationId: post-events-id-attempt
+      security:
+        - JWT: []
+      parameters: []
 components:
   schemas:
     SelectQuestionSlug:
-      oneOf:
-        - enum:
-            - email
-            - bando
-            - last-numbers-bando
-        - enum:
-            - month-vocals
-            - amount
-            - axis
-        - enum:
-            - moment-date
-      type: string
-      x-examples: {}
+      title: SelectQuestionSlug
+      enum:
+        - email
+        - bando
+        - last-numbers-bando
+        - month-vocals
+        - amount
+        - axis
+        - moment-date
+        - code-no-symbol-v2
+        - bando-ente-v2
+        - minutes-moment-v2
+        - code-symbol-v2
     TextQuestionSlug:
-      oneOf:
-        - enum:
-            - today
-            - tomorrow
-            - yesterday
-        - enum:
-            - first-characters
-            - first-numbers
-        - enum:
-            - last-characters
-            - last-numbers
-      type: string
-      x-examples: {}
+      title: TextQuestionSlug
+      enum:
+        - today
+        - tomorrow
+        - yesterday
+        - first-characters
+        - first-numbers
+        - last-characters
+        - last-numbers
+    RadioQuestionSlug:
+      title: RadioQuestionSlug
+      enum:
+        - bando-amount-v2
+        - bando-v2
+        - site-url-v2
+    Event:
+      title: Event
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
   securitySchemes:
     JWT:
       type: http

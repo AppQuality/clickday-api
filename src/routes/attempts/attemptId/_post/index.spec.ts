@@ -2,17 +2,33 @@ import app from "@src/app";
 import { clickDay } from "@src/features/database";
 import request from "supertest";
 
-const body: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["application/json"] =
+const bodyV1: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["application/json"] =
   [
     { slug: "email", answer: "a" },
+    { slug: "month-vocals", answer: "a" },
     { slug: "bando", answer: "a" },
     { slug: "last-numbers-bando", answer: "a" },
-    { slug: "month-vocals", answer: "a" },
     { slug: "amount", answer: "a" },
     { slug: "axis", answer: "a" },
     { slug: "moment-date", answer: "a" },
-    { slug: "today", answer: "a" },
+    { slug: "yesterday", answer: "a" },
     { slug: "first-characters", answer: "a" },
+    { slug: "tomorrow", answer: "a" },
+    { slug: "last-numbers", answer: "a" },
+    { slug: "today", answer: "a" },
+    { slug: "first-numbers", answer: "a" },
+    { slug: "last-characters", answer: "a" },
+  ];
+
+const bodyV2: StoplightOperations["post-attempts-id"]["requestBody"]["content"]["application/json"] =
+  [
+    { slug: "bando-v2", answer: "a" },
+    { slug: "code-no-symbol-v2", answer: "a" },
+    { slug: "bando-ente-v2", answer: "a" },
+    { slug: "bando-amount-v2", answer: "a" },
+    { slug: "minutes-moment-v2", answer: "a" },
+    { slug: "site-url-v2", answer: "a" },
+    { slug: "code-symbol-v2", answer: "a" },
   ];
 
 describe("POST /attempts/:id", () => {
@@ -20,23 +36,10 @@ describe("POST /attempts/:id", () => {
     await clickDay.tables.CdAttempts.do().delete();
     await clickDay.tables.CdAttemptsQuestions.do().delete();
   });
-  it("Should answer 400 if request body length is not 9", async () => {
-    const responseStart = await request(app)
-      .post("/attempts")
-      .send({
-        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
-      })
-      .set("authorization", "Bearer tester");
-    const response = await request(app)
-      .post("/attempts/" + responseStart.body.id)
-      .set("authorization", "Bearer tester")
-      .send([{ slug: "email", answer: "gino.porfilio@tryber.me" }]);
-    expect(response.status).toBe(400);
-  });
 
   it("Should answer 400 if request body send an item with a not allowed slug", async () => {
     // Set wrong slug in body
-    const wrongSlugInBody = body.map((item) => {
+    const wrongSlugInBody = bodyV1.map((item) => {
       if (item.slug === "email") {
         return { ...item, slug: "wrong-slug" };
       }
@@ -65,7 +68,7 @@ describe("POST /attempts/:id", () => {
     });
     const response = await request(app)
       .post(`/attempts/${id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
 
     expect(response.status).toBe(200);
@@ -74,7 +77,7 @@ describe("POST /attempts/:id", () => {
   it("Should answer 404 if attempId does not exist", async () => {
     const response = await request(app)
       .post("/attempts/99999")
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(404);
   });
@@ -90,7 +93,24 @@ describe("POST /attempts/:id", () => {
       .set("authorization", "Bearer tester");
     const response = await request(app)
       .post(`/attempts/${id}`)
-      .send(body)
+      .send(bodyV1)
+      .set("authorization", "Bearer tester");
+
+    expect(response.status).toBe(200);
+  });
+
+  it("Should answer 200 with version 2 body answers", async () => {
+    const {
+      body: { id },
+    } = await request(app)
+      .post("/attempts")
+      .send({
+        code: "+6b9105e31b7d638349ad7b059ef1ebgd4af610c26c5b70c2cbdea528773d2c0d",
+      })
+      .set("authorization", "Bearer tester");
+    const response = await request(app)
+      .post(`/attempts/${id}`)
+      .send(bodyV2)
       .set("authorization", "Bearer tester");
 
     expect(response.status).toBe(200);
@@ -108,7 +128,7 @@ describe("POST /attempts/:id", () => {
     jest.useFakeTimers().setSystemTime(new Date("2021-04-19 09:16:35"));
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     const endTime = new Date().getTime();
     expect(responseEnd.body.elapsedTime).toBeGreaterThan(0);
@@ -126,7 +146,7 @@ describe("POST /attempts/:id", () => {
     });
     await request(app)
       .post(`/attempts/${id[0]}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     const res = await clickDay.tables.CdAttempts.do()
       .select("end_time")
@@ -151,7 +171,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -187,7 +207,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -223,7 +243,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -261,7 +281,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -297,7 +317,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -333,7 +353,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -369,7 +389,7 @@ describe("POST /attempts/:id", () => {
     const correctAnswer = result?.correct_answer;
     const responseEnd = await request(app)
       .post(`/attempts/${responseStart.body.id}`)
-      .send(body)
+      .send(bodyV1)
       .set("authorization", "Bearer tester");
     expect(responseEnd.body.success).toBe(false);
     expect(responseEnd.body.wrongAnswers).toBeDefined();
@@ -405,19 +425,23 @@ describe("POST /attempts/:id", () => {
       .where({ attempt_id: attemptStartRequest.body.id });
 
     // search if type is today/tomorrow/yesterday
-    let type = "";
+    let t = "";
     resultTypes.forEach(({ type: resultType }) => {
       if (
         resultType === "today" ||
         resultType === "tomorrow" ||
         resultType === "yesterday"
       )
-        type = resultType;
+        t = resultType;
     });
 
+    if (!t) throw new Error("Type not found");
+
+    const type = t as StoplightComponents["schemas"]["TextQuestionSlug"];
+
     // replace today/tomorrow/yesterday question in body array with current type and wrong answer
-    const requestBody = body;
-    body.find((item, index) => {
+    const requestBody = bodyV1;
+    bodyV1.find((item, index) => {
       if (item.slug === "today") {
         requestBody[index] = { slug: type, answer: "a" };
         return true;
@@ -471,7 +495,7 @@ describe("POST /attempts/:id", () => {
       .where({ attempt_id: attemptStartRequest.body.id });
 
     // search if type is first-characters/last-characters/first-numbers/last-numbers
-    let type = "";
+    let t = "";
     resultTypes.forEach(({ type: resultType }) => {
       if (
         resultType === "first-characters" ||
@@ -479,11 +503,14 @@ describe("POST /attempts/:id", () => {
         resultType === "first-numbers" ||
         resultType === "last-numbers"
       )
-        type = resultType;
+        t = resultType;
     });
+
+    const type = t as StoplightComponents["schemas"]["TextQuestionSlug"];
+
     // replace first-characters/last-characters/first-numbers/last-numbers question in body array with current type and wrong answer
-    const requestBody = body;
-    body.find((item, index) => {
+    const requestBody = bodyV1;
+    bodyV1.find((item, index) => {
       if (item.slug === "first-characters") {
         requestBody[index] = { slug: type, answer: "a" };
         return true;
@@ -567,8 +594,8 @@ describe("POST /attempts/:id", () => {
     const correctAnswerEmail = resultCorrect?.correct_answer;
 
     // Update request body with correct answer
-    const requestBody = body;
-    body.find((item, index) => {
+    const requestBody = bodyV1;
+    bodyV1.find((item, index) => {
       if (item.slug === "email") {
         requestBody[index] = {
           slug: "email",

@@ -32,12 +32,60 @@ export interface paths {
       };
     };
   };
+  "/events": {
+    get: operations["get-events"];
+    post: operations["post-events"];
+  };
+  "/events/{id}/attempt": {
+    post: operations["post-events-id-attempt"];
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+  };
 }
 
 export interface components {
   schemas: {
-    SelectQuestionSlug: string;
-    TextQuestionSlug: string;
+    /**
+     * SelectQuestionSlug
+     * @enum {undefined}
+     */
+    SelectQuestionSlug:
+      | "email"
+      | "bando"
+      | "last-numbers-bando"
+      | "month-vocals"
+      | "amount"
+      | "axis"
+      | "moment-date"
+      | "code-no-symbol-v2"
+      | "bando-ente-v2"
+      | "minutes-moment-v2"
+      | "code-symbol-v2";
+    /**
+     * TextQuestionSlug
+     * @enum {undefined}
+     */
+    TextQuestionSlug:
+      | "today"
+      | "tomorrow"
+      | "yesterday"
+      | "first-characters"
+      | "first-numbers"
+      | "last-characters"
+      | "last-numbers";
+    /**
+     * RadioQuestionSlug
+     * @enum {undefined}
+     */
+    RadioQuestionSlug: "bando-amount-v2" | "bando-v2" | "site-url-v2";
+    /** Event */
+    Event: {
+      id: number;
+      title: string;
+    };
   };
   responses: {
     /** Authentication data. The token can be used to authenticate the protected requests */
@@ -151,6 +199,12 @@ export interface operations {
             } & (
               | {
                   /** @enum {string} */
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
                   type: "dropdown";
                   options: string[];
                   slug: components["schemas"]["SelectQuestionSlug"];
@@ -170,6 +224,7 @@ export interface operations {
       content: {
         "application/json": {
           code: string;
+          version?: number;
         };
       };
     };
@@ -191,7 +246,8 @@ export interface operations {
             wrongAnswers?: {
               slug:
                 | components["schemas"]["SelectQuestionSlug"]
-                | components["schemas"]["TextQuestionSlug"];
+                | components["schemas"]["TextQuestionSlug"]
+                | components["schemas"]["RadioQuestionSlug"];
               yourAnswer: string;
               correctAnswer: string;
             }[];
@@ -204,9 +260,81 @@ export interface operations {
         "application/json": {
           slug:
             | components["schemas"]["SelectQuestionSlug"]
-            | components["schemas"]["TextQuestionSlug"];
+            | components["schemas"]["TextQuestionSlug"]
+            | components["schemas"]["RadioQuestionSlug"];
           answer: string;
         }[];
+      };
+    };
+  };
+  "get-events": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Event"];
+        };
+      };
+    };
+  };
+  "post-events": {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Event"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          title: string;
+          start_date: string;
+          end_date: string;
+          version?: number;
+        };
+      };
+    };
+  };
+  "post-events-id-attempt": {
+    parameters: {
+      path: {
+        id: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            id: number;
+            code: string;
+            /** Format: date-time */
+            startTime: string;
+            questions: ({
+              title: string;
+            } & (
+              | {
+                  /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "dropdown";
+                  options: string[];
+                  slug: components["schemas"]["SelectQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
+                }
+            ))[];
+          };
+        };
       };
     };
   };
