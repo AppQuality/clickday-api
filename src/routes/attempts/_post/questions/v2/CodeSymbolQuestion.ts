@@ -1,6 +1,6 @@
 import DropdownQuestion from "./DropdownQuestion";
 
-export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-v2"> {
+export default class CodeSymbolQuestion extends DropdownQuestion<"code-symbol-v2"> {
   private static readonly options = [
     "%",
     "@",
@@ -17,17 +17,17 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-
   ];
 
   constructor(code: string) {
-    CodeNoSymbolQuestion.addOption(code.charAt(0));
+    CodeSymbolQuestion.addOption(code.charAt(0));
     super(
       "code-symbol-v2",
       `il simbolo iniziale del codice identificativo`,
-      CodeNoSymbolQuestion.options,
+      CodeSymbolQuestion.options,
       { symbol: code.charAt(0) }
     );
   }
 
   protected minimumOptions(): number {
-    return 4;
+    return CodeSymbolQuestion.options.length;
   }
 
   protected getCorrect({ symbol }: { symbol: string }) {
@@ -41,21 +41,21 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-symbol-
   }
 
   static addOption(symbol: string) {
-    CodeNoSymbolQuestion.options.splice(
-      Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+    CodeSymbolQuestion.options.splice(
+      Math.floor(Math.random() * CodeSymbolQuestion.options.length),
       0,
       symbol
     );
 
     if (symbol === "+") {
-      CodeNoSymbolQuestion.options.splice(
-        Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+      CodeSymbolQuestion.options.splice(
+        Math.floor(Math.random() * CodeSymbolQuestion.options.length),
         0,
         "-"
       );
     } else if (symbol === "-") {
-      CodeNoSymbolQuestion.options.splice(
-        Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
+      CodeSymbolQuestion.options.splice(
+        Math.floor(Math.random() * CodeSymbolQuestion.options.length),
         0,
         "+"
       );

@@ -22,7 +22,7 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symb
   }
 
   protected minimumOptions(): number {
-    return 4;
+    return CodeNoSymbolQuestion.options.length;
   }
 
   protected getCorrect({ code }: { code: string }) {

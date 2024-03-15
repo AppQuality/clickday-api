@@ -331,6 +331,11 @@ describe("POST /attempts", () => {
     expect(response.body.questions).toBeDefined();
     expect(response.body.questions).toBeInstanceOf(Array);
     expect(response.body.questions.length).toBeGreaterThanOrEqual(1);
+
+    const questionsDb = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where({ attempt_id: response.body.id });
+
     const expectedSlugs = [
       "bando-v2",
       "code-no-symbol-v2",
@@ -342,7 +347,14 @@ describe("POST /attempts", () => {
     ];
     for (const question of response.body.questions) {
       expect(expectedSlugs).toContain(question.slug);
-      expect(question.title).toContain("Selezionare");
+      questionsDb.forEach((q) => {
+        if (q.type === question.slug) {
+          expect(question.title).toContain(`Selezionare ${q.correct_answer}`);
+          if (question.options) {
+            expect(question.options).toContain(q.correct_answer);
+          }
+        }
+      });
     }
   });
 });
