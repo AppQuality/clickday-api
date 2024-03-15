@@ -36,7 +36,9 @@ export default class Question<
   public question() {
     return {
       type: this.type,
-      title: `${this.title}${this.showAnswer() ? ` (${this.correct})` : ""}`,
+      title: `${
+        this.showAnswer() ? `Selezionare ${this.correct}, ${this.title}` : ""
+      }`,
       slug: this.slug,
     };
   }

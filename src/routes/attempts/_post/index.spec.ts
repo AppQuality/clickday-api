@@ -206,7 +206,6 @@ describe("POST /attempts", () => {
     );
   });
 
-  // Should retrieve one question of each type on a new attempt
   it("Should retrieve one question of each type on a new attempt", async () => {
     const response = await request(app)
       .post("/attempts")
@@ -263,7 +262,6 @@ describe("POST /attempts", () => {
     expect(res?.submissions).toBe(0);
   });
 
-  // Should return the default version 1 questions if no version is sent in body
   it("Should return the default version 1 questions if no version is sent in body", async () => {
     const response = await request(app)
       .post("/attempts")
@@ -294,7 +292,6 @@ describe("POST /attempts", () => {
     }
   });
 
-  // Should return the version 1 questions if version 1 is sent in body
   it("Should return the version 1 questions if version 1 is sent in body", async () => {
     const response = await request(app)
       .post("/attempts")
@@ -325,8 +322,7 @@ describe("POST /attempts", () => {
     }
   });
 
-  // Should return the version 1 questions if version 2 is sent in body
-  it("Should return the version 1 questions if version 2 is sent in body", async () => {
+  it("Should return the version 2 questions if version 2 is sent in body", async () => {
     const response = await request(app)
       .post("/attempts")
       .send({ code: "+123", version: 2 })
@@ -346,6 +342,7 @@ describe("POST /attempts", () => {
     ];
     for (const question of response.body.questions) {
       expect(expectedSlugs).toContain(question.slug);
+      expect(question.title).toContain("Selezionare");
     }
   });
 });
