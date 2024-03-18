@@ -328,6 +328,10 @@ describe("POST /events", () => {
       const optionsArray = question.options.split(",");
       const find = optionsArray.find((o) => o === question.correct_answer);
       expect(find).toBeTruthy();
+      if (question.type === "code-no-symbol-v2") {
+        const optionsArray = question.options.split(",");
+        expect(optionsArray.length).toBe(8);
+      }
     }
   });
 });

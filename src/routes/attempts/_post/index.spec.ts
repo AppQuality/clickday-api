@@ -1,5 +1,6 @@
 import app from "@src/app";
 import { clickDay } from "@src/features/database";
+import e from "cors";
 import request from "supertest";
 
 describe("POST /attempts", () => {
@@ -356,6 +357,9 @@ describe("POST /attempts", () => {
               (o: string) => o === q.correct_answer
             );
             expect(find).toBeTruthy();
+            if (question.slug === "code-no-symbol-v2") {
+              expect(question.options.length).toBe(8);
+            }
           }
         }
       });
