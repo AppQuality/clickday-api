@@ -305,6 +305,10 @@ describe("POST /events", () => {
     const questions = await clickDay.tables.CdAttemptsQuestions.do()
       .select()
       .where("attempt_id", eventToAttempt[0].attempt_id);
+    const eventAttempt = await clickDay.tables.CdAttempts.do()
+      .select()
+      .where("id", eventToAttempt[0].attempt_id);
+    expect(eventAttempt[0].agency_code.length).toBe(64);
 
     const expectedSlugs = [
       "bando-v2",
@@ -317,6 +321,13 @@ describe("POST /events", () => {
     ];
     for (const question of questions) {
       expect(expectedSlugs).toContain(question.type);
+      expect(question.title).toContain(
+        `Selezionare ${question.correct_answer},`
+      );
+      expect(question.options).toContain(question.correct_answer);
+      const optionsArray = question.options.split(",");
+      const find = optionsArray.find((o) => o === question.correct_answer);
+      expect(find).toBeTruthy();
     }
   });
 });
