@@ -377,4 +377,65 @@ describe("POST /events/{id}/attempt", () => {
       .set("Authorization", "Bearer tester");
     expect(response.status).toBe(403);
   });
+
+  it("Should return the version 2 questions if the event is version 2", async () => {
+    // Create an event with version 2
+    const responseEvent = await request(app)
+      .post("/events")
+      .send({
+        title: "Event version 2",
+        start_date: start.toISOString(),
+        end_date: end.toISOString(),
+        version: 2,
+      })
+      .set("authorization", "Bearer admin");
+    expect(responseEvent.status).toBe(200);
+
+    // Get the event attempt questions
+    const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
+      .select()
+      .where({ event_id: responseEvent.body.id, is_blueprint: 1 })
+      .first();
+
+    const questionsDb = await clickDay.tables.CdAttemptsQuestions.do()
+      .select()
+      .where({ attempt_id: eventToAttempt?.attempt_id });
+
+    const response = await request(app)
+      .post(`/events/${responseEvent.body.id}/attempt`)
+      .set("Authorization", "Bearer tester");
+    expect(response.status).toBe(200);
+    expect(response.body.questions).toBeDefined();
+    expect(response.body.questions).toBeInstanceOf(Array);
+    expect(response.body.questions.length).toBeGreaterThanOrEqual(1);
+    expect(response.body.questions.length).toBe(7);
+
+    const expectedSlugs = [
+      "bando-v2",
+      "code-no-symbol-v2",
+      "bando-ente-v2",
+      "bando-amount-v2",
+      "minutes-moment-v2",
+      "site-url-v2",
+      "code-symbol-v2",
+    ];
+    for (const question of response.body.questions) {
+      expect(expectedSlugs).toContain(question.slug);
+      questionsDb.forEach((q) => {
+        if (q.type === question.slug) {
+          expect(question.title).toContain(`Selezionare ${q.correct_answer},`);
+          if (question.options) {
+            expect(question.options).toContain(q.correct_answer);
+            const find = question.options.find(
+              (o: string) => o === q.correct_answer
+            );
+            expect(find).toBeTruthy();
+            if (question.slug === "code-no-symbol-v2") {
+              expect(question.options.length).toBe(8);
+            }
+          }
+        }
+      });
+    }
+  });
 });
