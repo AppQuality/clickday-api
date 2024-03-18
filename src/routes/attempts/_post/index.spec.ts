@@ -349,9 +349,13 @@ describe("POST /attempts", () => {
       expect(expectedSlugs).toContain(question.slug);
       questionsDb.forEach((q) => {
         if (q.type === question.slug) {
-          expect(question.title).toContain(`Selezionare ${q.correct_answer}`);
+          expect(question.title).toContain(`Selezionare ${q.correct_answer},`);
           if (question.options) {
             expect(question.options).toContain(q.correct_answer);
+            const find = question.options.find(
+              (o: string) => o === q.correct_answer
+            );
+            expect(find).toBeTruthy();
           }
         }
       });
