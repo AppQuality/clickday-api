@@ -430,6 +430,8 @@ describe("POST /events/{id}/attempt", () => {
               (o: string) => o === q.correct_answer
             );
             expect(find).toBeTruthy();
+            const questionOptionsString = question.options.join(",");
+            expect(questionOptionsString.length).toBe(q.options.length);
             if (question.slug === "code-no-symbol-v2") {
               expect(question.options.length).toBe(8);
             }
