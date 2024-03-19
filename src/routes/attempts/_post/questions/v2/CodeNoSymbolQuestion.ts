@@ -1,15 +1,7 @@
 import DropdownQuestion from "./DropdownQuestion";
 
 export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symbol-v2"> {
-  private static readonly options = [
-    "%cb92246a-0634-4b94-8473-a8503bee1962NonSelezionareQuestoToken0101",
-    "(78d636ec-0737-45c6-8868-b1fbNonSelezionareQuestoToken01010836478b",
-    ")7028b564-8a61-4a7NonSelezionareQuestoToken01011-995e-ec63607479df",
-    "@5e7c1897-8fb6-4cNonSelezionareQuestoToken0101d8-b706-7e5e14ed5015",
-    "§66ae5000-f40d-4990-9c53-334e109d4abdNonSelezionareQuestoToken0101",
-    "?NonSelezionareQuestoToken01010b34aeb9-24be-49fb-9c05-727d7ef74d36",
-    "!1cf6999f-1364-4ace-b2a0NonSelezionareQuestoToken0101-377989e72b62",
-  ];
+  private static options: string[] = [];
 
   constructor(code: string) {
     CodeNoSymbolQuestion.addOption(code);
@@ -36,6 +28,15 @@ export default class CodeNoSymbolQuestion extends DropdownQuestion<"code-no-symb
   }
 
   static addOption(code: string) {
+    CodeNoSymbolQuestion.options = [
+      "%cb92246a-0634-4b94-8473-a8503bee1962NonSelezionareQuestoToken0101",
+      "(78d636ec-0737-45c6-8868-b1fbNonSelezionareQuestoToken01010836478b",
+      ")7028b564-8a61-4a7NonSelezionareQuestoToken01011-995e-ec63607479df",
+      "@5e7c1897-8fb6-4cNonSelezionareQuestoToken0101d8-b706-7e5e14ed5015",
+      "§66ae5000-f40d-4990-9c53-334e109d4abdNonSelezionareQuestoToken0101",
+      "?NonSelezionareQuestoToken01010b34aeb9-24be-49fb-9c05-727d7ef74d36",
+      "!1cf6999f-1364-4ace-b2a0NonSelezionareQuestoToken0101-377989e72b62",
+    ];
     CodeNoSymbolQuestion.options.splice(
       Math.floor(Math.random() * CodeNoSymbolQuestion.options.length),
       0,
