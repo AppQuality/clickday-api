@@ -179,6 +179,7 @@ export interface operations {
             date: string;
             time: string;
             errors: number;
+            event?: components["schemas"]["Event"];
           }[];
         };
       };

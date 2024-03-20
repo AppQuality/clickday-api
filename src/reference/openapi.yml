@@ -103,6 +103,11 @@ paths:
                 type: array
                 items:
                   type: object
+                  required:
+                    - id
+                    - date
+                    - time
+                    - errors
                   properties:
                     id:
                       type: integer
@@ -112,11 +117,8 @@ paths:
                       type: string
                     errors:
                       type: number
-                  required:
-                    - id
-                    - date
-                    - time
-                    - errors
+                    event:
+                      $ref: '#/components/schemas/Event'
       operationId: get-attempts
       security:
         - JWT: []
