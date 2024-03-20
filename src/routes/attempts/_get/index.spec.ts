@@ -65,6 +65,14 @@ describe("GET /attempts", () => {
         end_time: endToday.toISOString(),
         errors: 0,
       },
+      {
+        id: 5,
+        tester_id: 1,
+        agency_code: "+abcdefg",
+        start_time: startToday.toISOString(),
+        end_time: endToday.toISOString(),
+        errors: 0,
+      },
     ]);
   });
 
@@ -73,7 +81,7 @@ describe("GET /attempts", () => {
       .get("/attempts")
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
     const today = new Date();
     const todayString = `${today.getFullYear()}-${
       today.getMonth() + 1
@@ -85,20 +93,27 @@ describe("GET /attempts", () => {
     }-${yesterday.getDate()}`;
 
     expect(response.body).toEqual([
-      {
+      expect.objectContaining({
         id: 2,
+        code: "+asd123",
         date: todayString,
-        time: "10",
-        code: "+asd123",
         errors: 4,
-      },
-      {
-        id: 1,
-        date: yesterdayString,
         time: "10",
-        code: "+asd123",
+      }),
+      expect.objectContaining({
+        id: 5,
+        code: "+abcdefg",
+        date: todayString,
         errors: 0,
-      },
+        time: "10",
+      }),
+      expect.objectContaining({
+        id: 1,
+        code: "+asd123",
+        date: yesterdayString,
+        errors: 0,
+        time: "10",
+      }),
     ]);
   });
   it("Should return just attempts with end_date", async () => {
@@ -126,20 +141,27 @@ describe("GET /attempts", () => {
     }-${yesterday.getDate()}`;
     expect(response.body.length).not.toEqual(attempts.length);
     expect(response.body).toEqual([
-      {
+      expect.objectContaining({
         id: 2,
+        code: "+asd123",
         date: todayString,
-        time: "10",
-        code: "+asd123",
         errors: 4,
-      },
-      {
-        id: 1,
-        date: yesterdayString,
         time: "10",
-        code: "+asd123",
+      }),
+      expect.objectContaining({
+        id: 5,
+        code: "+abcdefg",
+        date: todayString,
         errors: 0,
-      },
+        time: "10",
+      }),
+      expect.objectContaining({
+        id: 1,
+        code: "+asd123",
+        date: yesterdayString,
+        errors: 0,
+        time: "10",
+      }),
     ]);
   });
 
@@ -149,8 +171,49 @@ describe("GET /attempts", () => {
       .get("/attempts")
       .set("authorization", "Bearer tester");
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
-    expect(response.body[0].id).toBe(2);
-    expect(response.body[1].id).toBe(1);
+    expect(response.body.length).toBe(3);
+    expect(response.body).toEqual([
+      expect.objectContaining({
+        id: 2,
+      }),
+      expect.objectContaining({
+        id: 5,
+      }),
+      expect.objectContaining({
+        id: 1,
+      }),
+    ]);
+  });
+
+  // Should return event if attempt is related to an event
+  it("Should return the event if the attempt is related to an event", async () => {
+    await clickDay.tables.CdEvents.do().insert({
+      id: 1,
+      title: "test event",
+      start_date: new Date().toISOString(),
+      end_date: new Date().toISOString(),
+    });
+
+    await clickDay.tables.CdEventsToAttempts.do().insert({
+      event_id: 1,
+      attempt_id: 5,
+    });
+
+    const response = await request(app)
+      .get("/attempts")
+      .set("authorization", "Bearer tester");
+
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(3);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 5,
+          event: expect.objectContaining({
+            title: "test event",
+          }),
+        }),
+      ])
+    );
   });
 });

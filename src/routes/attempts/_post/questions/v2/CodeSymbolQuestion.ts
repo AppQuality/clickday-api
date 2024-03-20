@@ -1,20 +1,7 @@
 import DropdownQuestion from "./DropdownQuestion";
 
 export default class CodeSymbolQuestion extends DropdownQuestion<"code-symbol-v2"> {
-  private static readonly options = [
-    "%",
-    "@",
-    "!",
-    "?",
-    ")",
-    "§",
-    "_",
-    "/",
-    "=",
-    "#",
-    "$",
-    "[",
-  ];
+  private static options: string[] = [];
 
   constructor(code: string) {
     CodeSymbolQuestion.addOption(code.charAt(0));
@@ -41,6 +28,20 @@ export default class CodeSymbolQuestion extends DropdownQuestion<"code-symbol-v2
   }
 
   static addOption(symbol: string) {
+    CodeSymbolQuestion.options = [
+      "%",
+      "@",
+      "!",
+      "?",
+      ")",
+      "§",
+      "_",
+      "/",
+      "=",
+      "#",
+      "$",
+      "[",
+    ];
     CodeSymbolQuestion.options.splice(
       Math.floor(Math.random() * CodeSymbolQuestion.options.length),
       0,
