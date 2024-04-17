@@ -50,7 +50,8 @@ export default class EventRoute<
   protected async getEventAttempt() {
     const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
       .select("attempt_id")
-      .where({ event_id: this.event_id })
+      .where({ event_id: this.event_id, is_blueprint: 1 })
+      .limit(1)
       .first();
     if (!eventToAttempt) throw new Error("Event attempt_id not found");
     const eventAttempt = await clickDay.tables.CdAttempts.do()
