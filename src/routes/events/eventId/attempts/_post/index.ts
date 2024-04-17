@@ -21,14 +21,34 @@ export default class Route extends EventRoute<{
   }
 
   protected async prepare() {
-    const attempt = await this.createAttempt();
-    const questions = await this.getEventAttemptQuestions();
+    const attemptData = await this.createAttempt();
+    const { attempt, questions } = attemptData;
 
     this.setSuccess(200, {
       id: attempt.id,
       code: attempt.agency_code,
       startTime: new Date(attempt.start_time).toISOString(),
-      questions,
+      questions: questions.map((question) => {
+        if (question.type === "dropdown")
+          return {
+            title: question.title,
+            options: question.options,
+            slug: question.slug,
+            type: question.type,
+          };
+        if (question.type === "radio")
+          return {
+            title: question.title,
+            options: question.options,
+            slug: question.slug,
+            type: question.type,
+          };
+        return {
+          title: question.title,
+          slug: question.slug,
+          type: question.type,
+        };
+      }),
     });
   }
 
@@ -42,6 +62,7 @@ export default class Route extends EventRoute<{
       start_time: event.start_date,
     });
 
+    // Get user attempt
     const attempt = await clickDay.tables.CdAttempts.do()
       .select("id", "start_time", "agency_code")
       .where({
@@ -52,28 +73,32 @@ export default class Route extends EventRoute<{
       .orderBy("id", "desc")
       .first();
     if (!attempt) throw new Error("Attempt not found");
+
+    // Link user attempt to event
     await clickDay.tables.CdEventsToAttempts.do().insert({
       event_id: event.id,
       attempt_id: attempt.id,
       is_blueprint: 0,
     });
 
-    const eventAttemptQuestions = await clickDay.tables.CdAttemptsQuestions.do()
-      .select()
-      .where({ attempt_id: blueprintAttempt.id });
+    // Get event attempt questions
+    const eventAttemptQuestions = await this.getEventAttemptQuestions();
 
     for (const question of eventAttemptQuestions) {
       await clickDay.tables.CdAttemptsQuestions.do().insert({
         attempt_id: attempt.id,
-        type: question.type,
+        type: question.slug,
         correct_answer: question.correct_answer,
-        input_type: question.input_type,
+        input_type: question.type,
         title: question.title,
-        ...(question.options && { options: question.options }),
+        ...(question.options && { options: question.options.join(",") }),
       });
     }
 
-    return attempt;
+    return {
+      attempt,
+      questions: eventAttemptQuestions,
+    };
   }
   private async hasAlreadyAttempted() {
     const event = await this.getEvent();
