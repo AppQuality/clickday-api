@@ -50,7 +50,8 @@ export default class EventRoute<
   protected async getEventAttempt() {
     const eventToAttempt = await clickDay.tables.CdEventsToAttempts.do()
       .select("attempt_id")
-      .where({ event_id: this.event_id })
+      .where({ event_id: this.event_id, is_blueprint: 1 })
+      .limit(1)
       .first();
     if (!eventToAttempt) throw new Error("Event attempt_id not found");
     const eventAttempt = await clickDay.tables.CdAttempts.do()
@@ -77,12 +78,26 @@ export default class EventRoute<
           type: question.input_type as "dropdown",
           slug: question.type as StoplightComponents["schemas"]["SelectQuestionSlug"],
           options: question.options.split(","),
+          correct_answer: question.correct_answer,
+        } as {
+          title: string;
+          type: "dropdown";
+          slug: StoplightComponents["schemas"]["SelectQuestionSlug"];
+          options: string[];
+          correct_answer: string;
         };
       } else if (question.input_type === "text") {
         return {
           title: question.title,
           type: question.input_type as "text",
           slug: question.type as StoplightComponents["schemas"]["TextQuestionSlug"],
+          correct_answer: question.correct_answer,
+        } as {
+          title: string;
+          type: "text";
+          slug: StoplightComponents["schemas"]["TextQuestionSlug"];
+          correct_answer: string;
+          options: undefined;
         };
       } else if (question.input_type === "radio") {
         return {
@@ -90,6 +105,13 @@ export default class EventRoute<
           type: question.input_type as "radio",
           slug: question.type as StoplightComponents["schemas"]["RadioQuestionSlug"],
           options: question.options.split(","),
+          correct_answer: question.correct_answer,
+        } as {
+          title: string;
+          type: "radio";
+          slug: StoplightComponents["schemas"]["RadioQuestionSlug"];
+          options: string[];
+          correct_answer: string;
         };
       } else {
         throw new Error("Invalid question type");
