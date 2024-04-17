@@ -43,6 +43,7 @@ export default class Route extends EventRoute<{
             slug: question.slug,
             type: question.type,
           };
+        // Text type
         return {
           title: question.title,
           slug: question.slug,
