@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
   title: AppQualityApi
-  version: '1.0'
+  version: "1.0"
   description: An API to get all data for your bugfinding and ux research needs!
   contact:
     name: Developers
     email: it@app-quality.com
 servers:
-  - url: 'https://api.app-quality.com'
+  - url: "https://api.unguess.io"
 paths:
   /:
     get:
@@ -15,7 +15,7 @@ paths:
       tags:
         - Info
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -34,10 +34,10 @@ paths:
       summary: Authenticate to the API
       operationId: post-authenticate
       responses:
-        '200':
-          $ref: '#/components/responses/Authentication'
-        '401':
-          $ref: '#/components/responses/NotAuthorized'
+        "200":
+          $ref: "#/components/responses/Authentication"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
       tags:
         - Authentication
       requestBody:
@@ -66,7 +66,7 @@ paths:
       tags:
         - User
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -95,7 +95,7 @@ paths:
       tags:
         - Attempts
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -118,7 +118,7 @@ paths:
                     errors:
                       type: number
                     event:
-                      $ref: '#/components/schemas/Event'
+                      $ref: "#/components/schemas/Event"
       operationId: get-attempts
       security:
         - JWT: []
@@ -127,7 +127,7 @@ paths:
       summary: Start an attempt
       operationId: post-attempts
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -167,7 +167,7 @@ paths:
                                   items:
                                     type: string
                                 slug:
-                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                                  $ref: "#/components/schemas/RadioQuestionSlug"
                             - required:
                                 - type
                                 - options
@@ -182,7 +182,7 @@ paths:
                                   items:
                                     type: string
                                 slug:
-                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                                  $ref: "#/components/schemas/SelectQuestionSlug"
                             - required:
                                 - type
                                 - slug
@@ -192,13 +192,13 @@ paths:
                                   enum:
                                     - text
                                 slug:
-                                  $ref: '#/components/schemas/TextQuestionSlug'
+                                  $ref: "#/components/schemas/TextQuestionSlug"
                       type: object
               examples:
                 Example 1:
                   value:
                     id: 123
-                    startTime: '2019-08-24T14:15:22Z'
+                    startTime: "2019-08-24T14:15:22Z"
                     questions:
                       - type: dropdown
                         slug: email
@@ -225,11 +225,11 @@ paths:
                         slug: last-numbers-bando
                         title: Seleziona le ultime 2 cifre del bando (22)
                         options:
-                          - '21'
-                          - '22'
-                          - '19'
-                          - '20'
-                          - '23'
+                          - "21"
+                          - "22"
+                          - "19"
+                          - "20"
+                          - "23"
                       - type: dropdown
                         slug: bando
                         title: Seleziona il bando al quale stai partecipando (bando inail 2022)
@@ -256,12 +256,12 @@ paths:
                         slug: axis
                         title: Seleziona il numero degli assi di finanziamento (123)
                         options:
-                          - '123'
-                          - '456'
-                          - '789'
-                          - '012'
-                          - '412'
-                          - '892'
+                          - "123"
+                          - "456"
+                          - "789"
+                          - "012"
+                          - "412"
+                          - "892"
                       - type: dropdown
                         slug: moment-date
                         title: Seleziona la data del momento 1 (22/01/2023)
@@ -277,8 +277,8 @@ paths:
                       - type: text
                         slug: first-characters
                         title: Inserisci i primi 5 caratteri del codice alfanumerico
-        '403':
-          $ref: '#/components/responses/Error'
+        "403":
+          $ref: "#/components/responses/Error"
       description: Create a new attempt from a code
       security:
         - JWT: []
@@ -297,10 +297,10 @@ paths:
             examples:
               Example 1:
                 value:
-                  code: '-6c9105e31b7d678349ad7b059ef1ebbd4ae610c26c5b70c2bbdea528173d2b03'
+                  code: "-6c9105e31b7d678349ad7b059ef1ebbd4ae610c26c5b70c2bbdea528173d2b03"
       tags:
         - Attempts
-  '/attempts/{id}':
+  "/attempts/{id}":
     parameters:
       - schema:
           type: string
@@ -311,7 +311,7 @@ paths:
       summary: Complete an attempt
       operationId: post-attempts-id
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -336,9 +336,9 @@ paths:
                       properties:
                         slug:
                           oneOf:
-                            - $ref: '#/components/schemas/SelectQuestionSlug'
-                            - $ref: '#/components/schemas/TextQuestionSlug'
-                            - $ref: '#/components/schemas/RadioQuestionSlug'
+                            - $ref: "#/components/schemas/SelectQuestionSlug"
+                            - $ref: "#/components/schemas/TextQuestionSlug"
+                            - $ref: "#/components/schemas/RadioQuestionSlug"
                         yourAnswer:
                           type: string
                         correctAnswer:
@@ -367,9 +367,9 @@ paths:
                 properties:
                   slug:
                     oneOf:
-                      - $ref: '#/components/schemas/SelectQuestionSlug'
-                      - $ref: '#/components/schemas/TextQuestionSlug'
-                      - $ref: '#/components/schemas/RadioQuestionSlug'
+                      - $ref: "#/components/schemas/SelectQuestionSlug"
+                      - $ref: "#/components/schemas/TextQuestionSlug"
+                      - $ref: "#/components/schemas/RadioQuestionSlug"
                   answer:
                     type: string
             examples: {}
@@ -381,12 +381,78 @@ paths:
       summary: Get incoming event
       tags: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                allOf:
+                  - $ref: "#/components/schemas/Event"
+                  - type: object
+                required:
+                  - attempt_id
+                  - code
+                  - startTime
+                  - questions
+                properties:
+                  attempt_id:
+                    type: integer
+                  code:
+                    type: string
+                  startTime:
+                    type: string
+                    format: date-time
+                  questions:
+                    type: array
+                    items:
+                      allOf:
+                        - required:
+                            - title
+                          properties:
+                            title:
+                              type: string
+                        - oneOf:
+                            - required:
+                                - type
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - text
+                                slug:
+                                  $ref: "#/components/schemas/TextQuestionSlug"
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - dropdown
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: "#/components/schemas/SelectQuestionSlug"
+                            - required:
+                                - type
+                                - options
+                                - slug
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - radio
+                                options:
+                                  type: array
+                                  items:
+                                    type: string
+                                slug:
+                                  $ref: "#/components/schemas/RadioQuestionSlug"
+                      type: object
       operationId: get-events
       security:
         - JWT: []
@@ -394,12 +460,12 @@ paths:
       summary: Create an event
       tags: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event'
+                $ref: "#/components/schemas/Event"
       operationId: post-events
       requestBody:
         content:
@@ -419,10 +485,10 @@ paths:
                   type: string
                 version:
                   type: integer
-      description: ''
+      description: ""
       security:
         - JWT: []
-  '/events/{id}/attempt':
+  "/events/{id}/attempt":
     parameters:
       - schema:
           type: string
@@ -433,7 +499,7 @@ paths:
       summary: Start an event attempt
       tags: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -471,7 +537,7 @@ paths:
                                   enum:
                                     - text
                                 slug:
-                                  $ref: '#/components/schemas/TextQuestionSlug'
+                                  $ref: "#/components/schemas/TextQuestionSlug"
                             - required:
                                 - type
                                 - options
@@ -486,7 +552,7 @@ paths:
                                   items:
                                     type: string
                                 slug:
-                                  $ref: '#/components/schemas/SelectQuestionSlug'
+                                  $ref: "#/components/schemas/SelectQuestionSlug"
                             - required:
                                 - type
                                 - options
@@ -501,7 +567,7 @@ paths:
                                   items:
                                     type: string
                                 slug:
-                                  $ref: '#/components/schemas/RadioQuestionSlug'
+                                  $ref: "#/components/schemas/RadioQuestionSlug"
                       type: object
               examples: {}
       operationId: post-events-id-attempt
@@ -555,7 +621,7 @@ components:
     JWT:
       type: http
       scheme: bearer
-      description: ''
+      description: ""
   responses:
     Authentication:
       description: Authentication data. The token can be used to authenticate the protected requests
