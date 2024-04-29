@@ -273,7 +273,35 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json": components["schemas"]["Event"];
+          "application/json": components["schemas"]["Event"] & {
+            [key: string]: unknown;
+          } & {
+            id: number;
+            code: string;
+            /** Format: date-time */
+            startTime: string;
+            questions: ({
+              title: string;
+            } & (
+              | {
+                  /** @enum {string} */
+                  type: "text";
+                  slug: components["schemas"]["TextQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "dropdown";
+                  options: string[];
+                  slug: components["schemas"]["SelectQuestionSlug"];
+                }
+              | {
+                  /** @enum {string} */
+                  type: "radio";
+                  options: string[];
+                  slug: components["schemas"]["RadioQuestionSlug"];
+                }
+            ))[];
+          };
         };
       };
     };
